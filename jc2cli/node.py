@@ -1,4 +1,4 @@
-from command import Command
+from jc2cli.command import Command
 
 
 class Node(object):

@@ -1,5 +1,5 @@
 from functools import wraps
-from tree import Tree
+from jc2cli.tree import Tree
 
 
 def command(syntax, namespace=None):

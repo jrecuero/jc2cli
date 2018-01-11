@@ -1,4 +1,4 @@
-from decorators import command, argo
+from jc2cli.decorators import command, argo
 
 
 class Cli(object):

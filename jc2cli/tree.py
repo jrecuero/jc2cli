@@ -1,4 +1,4 @@
-from node import Node
+from jc2cli.node import Node
 
 
 class Tree(object):
