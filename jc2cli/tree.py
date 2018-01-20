@@ -40,6 +40,10 @@ class Tree(object):
         return cls.__new__(cls)
 
     @classmethod
+    def command_tree(cls):
+        return cls.__COMMAND_TREE
+
+    @classmethod
     def node(cls, name, cb):
         root = Tree.root()
         node = root.get_node(name)
@@ -50,15 +54,42 @@ class Tree(object):
 
     @classmethod
     def fnode(cls, f, cb):
+        """fnode method create a node based on the qualified name for the
+        function callback. It makes use of the module where the callback
+        is defined and the callback function qualified name."""
         node_name = '{0}.{1}'.format(f.__module__, f.__qualname__)
         return cls.node(node_name, cb)
 
     @classmethod
-    def start(cls, namespace):
+    def start(cls, namespace, full_matched=True):
         root = Tree.root()
-        traverse = {k: v for (k, v) in root.get_db().items() if namespace in k}
+        # full_matched only for commands under the exactly namespace.
+        if full_matched:
+            traverse = {k: v for (k, v) in root.get_db().items() if namespace == '.'.join(k.split('.')[:-1])}
+        else:
+            traverse = {k: v for (k, v) in root.get_db().items() if namespace in k}
         # Command tree can not have duplicated commands (same command name).
         # Check if there are any duplicated command (based on command name).
         assert len(traverse.keys()) == len(set([v.command.name for v in traverse.values()])), 'Duplicated Commands'
         cls.__COMMAND_TREE = {v.command.name: v for (k, v) in traverse.items()}
         return cls.__COMMAND_TREE
+
+    @classmethod
+    def run(cls, command_name, *args, **kwargs):
+        node = cls.command_tree().get(command_name, None)
+        if node and node.command:
+            node.command.cb(*args, **kwargs)
+
+    @classmethod
+    def none_run(cls, command_name, *args, **kwargs):
+        """non_run methods execute a callback when it is defined as a class
+        method but it does not make use of the class instance in the callback.
+        """
+        cls.run(command_name, None, *args, **kwargs)
+
+    @classmethod
+    def instance_run(cls, command_name, instance, *args, **kwargs):
+        """instance_run methods execute a callback when it is defined as a
+        class method. It receives the instance to be used.
+        """
+        cls.run(command_name, instance, *args, **kwargs)
