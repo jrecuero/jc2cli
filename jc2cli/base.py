@@ -33,7 +33,10 @@ class Base(object):
                           style=DocumentStyle,
                           completer=completer)
             print('You entered: {}'.format(line))
-            if not self.handler(line):
+            result = self.handler(line)
+            if result is None:
+                print('Unknown command: {}'.format(line))
+            elif not result:
                 break
 
         print('GoodBye!')

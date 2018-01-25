@@ -41,8 +41,12 @@ class Tree(object):
         return cls.__new__(cls)
 
     @classmethod
+    def command_tree_namespace(cls, namespace):
+        return cls.__COMMAND_TREE[namespace]
+
+    @classmethod
     def command_tree(cls):
-        return cls.__COMMAND_TREE[cls.__ACTIVE]
+        return cls.command_tree_namespace(cls.__ACTIVE)
 
     @classmethod
     def set_command_tree(cls, namespace, command_tree):
@@ -51,7 +55,7 @@ class Tree(object):
         return cls.__COMMAND_TREE[cls.__ACTIVE]
 
     @classmethod
-    def append_command_tree(cls, namespace, command_tree):
+    def extend_command_tree(cls, namespace, command_tree):
         if namespace in cls.__COMMAND_TREE.keys():
             cls.__COMMAND_TREE[namespace].update(command_tree)
             return cls.__COMMAND_TREE[namespace]
@@ -92,7 +96,7 @@ class Tree(object):
 
     @classmethod
     def fnode(cls, f, cb):
-        """fnode method create a node based on the qualified name for the
+        """fnode creates a node based on the qualified name for the
         function callback. It makes use of the module where the callback
         is defined and the callback function qualified name."""
         node_name = '{0}.{1}'.format(f.__module__, f.__qualname__)
@@ -100,41 +104,52 @@ class Tree(object):
 
     @classmethod
     def start(cls, namespace, ns_module, full_matched=True):
+        """start creates a namespace with all commands for the given
+        ns_module.
+        """
         cls.create(namespace)
         command_tree = cls.build_command_tree_from_ns_module(ns_module, full_matched)
         return cls.set_command_tree(namespace, command_tree)
 
     @classmethod
-    def create(cls, namespace):
-        """create method creates a new namespace to be used for a set of
-        commands.
+    def create(cls, namespace, command_tree=None):
+        """create creates a new namespace to be used for a set of commands.
         """
-        cls.__COMMAND_TREE[namespace] = {}
+        cls.__COMMAND_TREE[namespace] = command_tree if command_tree else {}
 
     @classmethod
-    def append(cls, namespace, ns_module, full_matched=True):
-        """append method appends all commands found under the ns_module to the
+    def extend(cls, namespace, ns_module, full_matched=True):
+        """extend method extends all commands found under the ns_module to the
         given namespace.
         """
         command_tree = cls.build_command_tree_from_ns_module(ns_module, full_matched)
-        return cls.append_command_tree(namespace, command_tree)
+        return cls.extend_command_tree(namespace, command_tree)
+
+    @classmethod
+    def extend_with_namespace(cls, namespace_base, namespace_ext):
+        """extend_with_namespace extends the given namespace with the command
+        tree from the extension namespace.
+        """
+        command_tree_ext = cls.command_tree_namespace(namespace_ext)
+        return cls.extend_command_tree(namespace_base, command_tree_ext)
 
     @classmethod
     def run(cls, command_name, *args, **kwargs):
         node = cls.command_tree().get(command_name, None)
         if node and node.command:
-            node.command.cb(*args, **kwargs)
+            return node.command.cb(*args, **kwargs)
+        return None
 
     @classmethod
     def run_none(cls, command_name, *args, **kwargs):
         """run_none methods execute a callback when it is defined as a class
         method but it does not make use of the class instance in the callback.
         """
-        cls.run(command_name, None, *args, **kwargs)
+        return cls.run(command_name, None, *args, **kwargs)
 
     @classmethod
     def run_instance(cls, command_name, instance, *args, **kwargs):
         """run_instance methods execute a callback when it is defined as a
         class method. It receives the instance to be used.
         """
-        cls.run(command_name, instance, *args, **kwargs)
+        return cls.run(command_name, instance, *args, **kwargs)

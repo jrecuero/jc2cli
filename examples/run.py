@@ -1,5 +1,7 @@
 from jc2cli.tree import Tree
 from jc2cli.base import Base
+from jc2cli.default.handlers import handler
+from jc2cli.default.commands import extend_with_defaults
 
 
 # MAIN = __import__('examples.main')
@@ -29,13 +31,15 @@ class RunCli(object):
         #     # Tree.run(k, None)
         #     Tree.run_none(k)
 
-        self.commands = Tree.start('examples.main.Cli', 'examples.main.Cli')
-        base = Base('examples.main.Cli', self.commands, self.handler)
+        namespace = ns_module = 'examples.main'
+        self.commands = Tree.start(namespace, ns_module)
+        base = Base(namespace, self.commands, handler)
+        extend_with_defaults(namespace)
         base.run()
 
-    def handler(self, line):
-        Tree.run_none(line)
-        return True
+    # def handler(self, line):
+    #     Tree.run(line)
+    #     return True
 
 
 if __name__ == '__main__':
