@@ -4,7 +4,7 @@ from jc2cli.decorators import command, argo
 @command("START time", 'New')
 @argo('time', int, 0)
 def start():
-    print('config start: runnning in execute module')
+    print('config start: runnning in execute module renamed to New')
 
 
 class Cli(object):

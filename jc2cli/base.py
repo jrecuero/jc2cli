@@ -23,6 +23,13 @@ class Base(object):
         self.commands = commands
         self.handler  = handler
 
+    @staticmethod
+    def get_command_from_line(line):
+        if len(line):
+            lista = line.split()
+            return lista[0], ' '.join(lista[1:])
+        return None, None
+
     def run(self):
         history = InMemoryHistory()
         completer = WordCompleter(self.commands.keys(), ignore_case=True)
