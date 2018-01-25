@@ -18,21 +18,22 @@ class DocumentStyle(Style):
 
 class Base(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, namespace, commands, handler):
+        self.namespace = namespace
+        self.commands = commands
+        self.handler  = handler
 
     def run(self):
         history = InMemoryHistory()
-        completer = WordCompleter(['hello', 'bye', 'open', 'close',
-                                   'card'], ignore_case=True)
+        completer = WordCompleter(self.commands.keys(), ignore_case=True)
 
         while True:
-            text = prompt('> ',
+            line = prompt('> ',
                           history=history,
                           style=DocumentStyle,
                           completer=completer)
-            print('You entered: {}'.format(text))
-            if text == 'bye':
+            print('You entered: {}'.format(line))
+            if not self.handler(line):
                 break
 
         print('GoodBye!')

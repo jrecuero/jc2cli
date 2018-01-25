@@ -4,7 +4,8 @@ from jc2cli.node import Node
 class Tree(object):
 
     __ROOT = None
-    __COMMAND_TREE = None
+    __COMMAND_TREE = {}
+    __ACTIVE = None
 
     class _Tree(object):
 
@@ -41,7 +42,44 @@ class Tree(object):
 
     @classmethod
     def command_tree(cls):
-        return cls.__COMMAND_TREE
+        return cls.__COMMAND_TREE[cls.__ACTIVE]
+
+    @classmethod
+    def set_command_tree(cls, namespace, command_tree):
+        cls.__ACTIVE = namespace
+        cls.__COMMAND_TREE[cls.__ACTIVE] = command_tree
+        return cls.__COMMAND_TREE[cls.__ACTIVE]
+
+    @classmethod
+    def append_command_tree(cls, namespace, command_tree):
+        if namespace in cls.__COMMAND_TREE.keys():
+            cls.__COMMAND_TREE[namespace].update(command_tree)
+            return cls.__COMMAND_TREE[namespace]
+        return None
+
+    @classmethod
+    def switch_to(cls, namespace):
+        if namespace in cls.__COMMAND_TREE.keys():
+            cls.__ACTIVE = namespace
+            return True
+        else:
+            return False
+
+    @classmethod
+    def build_command_tree_from_ns_module(cls, ns_module, full_matched=True):
+        """build_command_tree_from_ns_module creates a new command tree
+        dictionary looking for all commands matching ns_module.
+        """
+        root = Tree.root()
+        # full_matched only for commands under the exactly ns_module.
+        if full_matched:
+            traverse = {k: v for (k, v) in root.get_db().items() if ns_module == '.'.join(k.split('.')[:-1])}
+        else:
+            traverse = {k: v for (k, v) in root.get_db().items() if ns_module in k}
+        # Command tree can not have duplicated commands (same command name).
+        # Check if there are any duplicated command (based on command name).
+        assert len(traverse.keys()) == len(set([v.command.name for v in traverse.values()])), 'Duplicated Commands'
+        return {v.command.name: v for (k, v) in traverse.items()}
 
     @classmethod
     def node(cls, name, cb):
@@ -61,18 +99,25 @@ class Tree(object):
         return cls.node(node_name, cb)
 
     @classmethod
-    def start(cls, namespace, full_matched=True):
-        root = Tree.root()
-        # full_matched only for commands under the exactly namespace.
-        if full_matched:
-            traverse = {k: v for (k, v) in root.get_db().items() if namespace == '.'.join(k.split('.')[:-1])}
-        else:
-            traverse = {k: v for (k, v) in root.get_db().items() if namespace in k}
-        # Command tree can not have duplicated commands (same command name).
-        # Check if there are any duplicated command (based on command name).
-        assert len(traverse.keys()) == len(set([v.command.name for v in traverse.values()])), 'Duplicated Commands'
-        cls.__COMMAND_TREE = {v.command.name: v for (k, v) in traverse.items()}
-        return cls.__COMMAND_TREE
+    def start(cls, namespace, ns_module, full_matched=True):
+        cls.create(namespace)
+        command_tree = cls.build_command_tree_from_ns_module(ns_module, full_matched)
+        return cls.set_command_tree(namespace, command_tree)
+
+    @classmethod
+    def create(cls, namespace):
+        """create method creates a new namespace to be used for a set of
+        commands.
+        """
+        cls.__COMMAND_TREE[namespace] = {}
+
+    @classmethod
+    def append(cls, namespace, ns_module, full_matched=True):
+        """append method appends all commands found under the ns_module to the
+        given namespace.
+        """
+        command_tree = cls.build_command_tree_from_ns_module(ns_module, full_matched)
+        return cls.append_command_tree(namespace, command_tree)
 
     @classmethod
     def run(cls, command_name, *args, **kwargs):
@@ -81,15 +126,15 @@ class Tree(object):
             node.command.cb(*args, **kwargs)
 
     @classmethod
-    def none_run(cls, command_name, *args, **kwargs):
-        """non_run methods execute a callback when it is defined as a class
+    def run_none(cls, command_name, *args, **kwargs):
+        """run_none methods execute a callback when it is defined as a class
         method but it does not make use of the class instance in the callback.
         """
         cls.run(command_name, None, *args, **kwargs)
 
     @classmethod
-    def instance_run(cls, command_name, instance, *args, **kwargs):
-        """instance_run methods execute a callback when it is defined as a
+    def run_instance(cls, command_name, instance, *args, **kwargs):
+        """run_instance methods execute a callback when it is defined as a
         class method. It receives the instance to be used.
         """
         cls.run(command_name, instance, *args, **kwargs)

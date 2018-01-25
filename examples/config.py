@@ -10,4 +10,4 @@ class Cli(object):
     @argo('app', str, "none")
     @argo('default', str)
     def config(self):
-        print('config')
+        print('config: running in config module')
