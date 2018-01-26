@@ -5,7 +5,9 @@ class Tree(object):
 
     __ROOT = None
     __COMMAND_TREE = {}
-    __ACTIVE = None
+    __MODE_TREE = {}
+    __ACTIVE_CMD_NS = None
+    __ACTIVE_MODE_NS = None
 
     class _Tree(object):
 
@@ -46,13 +48,13 @@ class Tree(object):
 
     @classmethod
     def command_tree(cls):
-        return cls.command_tree_namespace(cls.__ACTIVE)
+        return cls.command_tree_namespace(cls.__ACTIVE_CMD_NS)
 
     @classmethod
     def set_command_tree(cls, namespace, command_tree):
-        cls.__ACTIVE = namespace
-        cls.__COMMAND_TREE[cls.__ACTIVE] = command_tree
-        return cls.__COMMAND_TREE[cls.__ACTIVE]
+        cls.__ACTIVE_CMD_NS = namespace
+        cls.__COMMAND_TREE[cls.__ACTIVE_CMD_NS] = command_tree
+        return cls.__COMMAND_TREE[cls.__ACTIVE_CMD_NS]
 
     @classmethod
     def extend_command_tree(cls, namespace, command_tree):
@@ -64,7 +66,7 @@ class Tree(object):
     @classmethod
     def switch_to(cls, namespace):
         if namespace in cls.__COMMAND_TREE.keys():
-            cls.__ACTIVE = namespace
+            cls.__ACTIVE_CMD_NS = namespace
             return True
         else:
             return False
@@ -86,21 +88,21 @@ class Tree(object):
         return {v.command.name: v for (k, v) in traverse.items()}
 
     @classmethod
-    def node(cls, name, cb):
+    def node(cls, name, cb, mode=False):
         root = Tree.root()
         node = root.get_node(name)
         if not node:
-            node = Node(name, cb)
+            node = Node(name, cb, mode)
             root.add_node(node.name, node)
         return node
 
     @classmethod
-    def fnode(cls, f, cb):
+    def fnode(cls, f, cb, mode=False):
         """fnode creates a node based on the qualified name for the
         function callback. It makes use of the module where the callback
         is defined and the callback function qualified name."""
         node_name = '{0}.{1}'.format(f.__module__, f.__qualname__)
-        return cls.node(node_name, cb)
+        return cls.node(node_name, cb, mode)
 
     @classmethod
     def start(cls, namespace, ns_module, full_matched=True):
@@ -134,8 +136,12 @@ class Tree(object):
         return cls.extend_command_tree(namespace_base, command_tree_ext)
 
     @classmethod
+    def get_node(cls, command_name):
+        return cls.command_tree().get(command_name, None)
+
+    @classmethod
     def run(cls, command_name, *args, **kwargs):
-        node = cls.command_tree().get(command_name, None)
+        node = cls.get_node(command_name)
         if node and node.command:
             return node.command.cb(*args, **kwargs)
         return None
