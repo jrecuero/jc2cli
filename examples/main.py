@@ -1,4 +1,4 @@
-from jc2cli.decorators import command, argo
+from jc2cli.decorators import command, mode, argo
 
 
 @command('START app default')
@@ -13,6 +13,11 @@ def start():
 @argo('time', int, 0)
 def end():
     print('end: running in main module')
+    return True
+
+
+@mode("CLI", "examples.main.Cli")
+def cli():
     return True
 
 

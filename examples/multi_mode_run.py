@@ -1,6 +1,7 @@
 from jc2cli.tree import Tree
 from jc2cli.base import Base
 from jc2cli.namespace import Handler
+from jc2cli.default.handlers import handler_mode
 
 
 class RunCli(object):
@@ -11,7 +12,7 @@ class RunCli(object):
         __import__('examples.execute')
 
         self.modes = {}
-        self.modes['main'] = Handler('examples.main', handler=self.handler)
+        self.modes['main'] = Handler('examples.main', handler=handler_mode)
         self.modes['main'].start_commands()
         self.modes['main'].create_cli()
         self.modes['main.cli'] = Handler('examples.main.Cli', handler=self.handler_none)

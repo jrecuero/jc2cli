@@ -11,11 +11,7 @@ def handler_instance(command_name, instance, *args, **kwargs):
 
 def handler_mode(command_name, *args, **kwargs):
     node = Tree.get_node(command_name)
-    if node.is_mode():
-        if Tree.run(command_name, *args, **kwargs):
-            # Do some mode staff here
-            return True
-        else:
-            return None
-    else:
-        return Tree.run(command_name, *args, **kwargs)
+    result = Tree.run(command_name, *args, **kwargs)
+    if node.is_mode() and result:
+        Tree.switch_to(node.command.namespace)
+    return result
