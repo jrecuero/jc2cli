@@ -64,6 +64,10 @@ class Tree(object):
         return None
 
     @classmethod
+    def active_namespace(cls):
+        return cls.__ACTIVE_CMD_NS
+
+    @classmethod
     def switch_to(cls, namespace):
         if namespace in cls.__COMMAND_TREE.keys():
             cls.__ACTIVE_CMD_NS = namespace
@@ -157,9 +161,9 @@ class Tree(object):
                 use_args = command.build_command_arguments_from_syntax(line)
             if use_args is not None:
                 if cli_args:
-                    return command.cb(*use_args, cli_args)
+                    return command.cb(*args, *use_args, cli_args)
                 else:
-                    return command.cb(*use_args)
+                    return command.cb(*args, *use_args)
 
     @classmethod
     def run_none(cls, command_name, *args, **kwargs):

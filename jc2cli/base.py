@@ -30,7 +30,7 @@ class Base(object):
             return lista[0], ' '.join(lista[1:])
         return None, None
 
-    def run(self):
+    def run(self, *args, **kwargs):
         history = InMemoryHistory()
         completer = WordCompleter(self.commands.keys(), ignore_case=True)
 

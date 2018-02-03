@@ -12,8 +12,8 @@ def start(app, default):
 
 @command("END time")
 @argo('time', Int, 0)
-def end():
-    print('end: running in main module')
+def end(time):
+    print('end: running in main module at {0}'.format(time))
     return True
 
 
@@ -30,12 +30,12 @@ class Cli(object):
     @command('START app default')
     @argo('app', Str, "none")
     @argo('default', Str)
-    def start(self):
-        print('start: running in main module main.Cli class')
+    def start(self, app, default):
+        print('start: running in main module main.Cli class with {0} and {1}'.format(app, default))
         return True
 
     @command("END time")
     @argo('time', Int, 0)
-    def end(self):
-        print('end: running in main module main.Cli class')
+    def end(self, time):
+        print('end: running in main module main.Cli class at {0}'.format(time))
         return True
