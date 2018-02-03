@@ -40,7 +40,8 @@ class Base(object):
                           style=DocumentStyle,
                           completer=completer)
             print('You entered: {}'.format(line))
-            result = self.handler(line)
+            command, params = Base.get_command_from_line(line)
+            result = self.handler(command, line=params)
             if result is None:
                 print('Unknown command: {}'.format(line))
             elif not result:

@@ -10,7 +10,7 @@ __docformat__ = 'restructuredtext en'
 # -----------------------------------------------------------------------------
 #
 from collections import OrderedDict
-import jc2li.tools.loggerator as loggerator
+import jc2cli.tools.loggerator as loggerator
 
 
 # -----------------------------------------------------------------------------

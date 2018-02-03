@@ -8,8 +8,8 @@ class RunCli(object):
 
     def __init__(self):
         __import__('examples.main')
-        __import__('examples.config')
-        __import__('examples.execute')
+        # __import__('examples.config')
+        # __import__('examples.execute')
 
         self.modes = {}
         self.modes['main'] = Handler('examples.main', handler=handler_mode)

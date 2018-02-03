@@ -1,16 +1,17 @@
 from jc2cli.decorators import command, mode, argo
+from jc2cli.argo_types import Str, Int
 
 
 @command('START app default')
-@argo('app', str, "none")
-@argo('default', str)
-def start():
-    print('start: running in main module')
+@argo('app', Str, "none")
+@argo('default', Str)
+def start(app, default):
+    print('start: running in main module with {0} and {1}'.format(app, default))
     return True
 
 
 @command("END time")
-@argo('time', int, 0)
+@argo('time', Int, 0)
 def end():
     print('end: running in main module')
     return True
@@ -27,14 +28,14 @@ class Cli(object):
         pass
 
     @command('START app default')
-    @argo('app', str, "none")
-    @argo('default', str)
+    @argo('app', Str, "none")
+    @argo('default', Str)
     def start(self):
         print('start: running in main module main.Cli class')
         return True
 
     @command("END time")
-    @argo('time', int, 0)
+    @argo('time', Int, 0)
     def end(self):
         print('end: running in main module main.Cli class')
         return True

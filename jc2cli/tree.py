@@ -141,10 +141,25 @@ class Tree(object):
 
     @classmethod
     def run(cls, command_name, *args, **kwargs):
+
+        #  node = cls.get_node(command_name)
+        #  if node and node.command:
+        #      return node.command.cb(*args, **kwargs)
+        # return None
         node = cls.get_node(command_name)
         if node and node.command:
-            return node.command.cb(*args, **kwargs)
-        return None
+            command = node.command
+            line = kwargs.get('line', None)
+            if command.rules is None:
+                use_args, cli_args = command.build_command_arguments_from_argos(line)
+            else:
+                cli_args = None
+                use_args = command.build_command_arguments_from_syntax(line)
+            if use_args is not None:
+                if cli_args:
+                    return command.cb(*use_args, cli_args)
+                else:
+                    return command.cb(*use_args)
 
     @classmethod
     def run_none(cls, command_name, *args, **kwargs):
