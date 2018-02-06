@@ -127,26 +127,3 @@ class Command(object):
         if not all(map(lambda x: x is not None, use_args)):
             raise CliException(MODULE, 'Mandatory argument is not present')
         return use_args
-
-    def build_command_arguments_from_argos(self, line):
-        """Method that build arguments to be passed to the command function.
-
-        Returns:
-            list: pair with the list with argument to be passed to the\
-                    command function and remaining entries in the command\
-                    line.
-        """
-        if self.arguments:
-            self.arguments.index()
-            cli_args = shlex.split(line)
-            cli_args.reverse()
-            for argument in self.arguments.traverse():
-                argument.value = argument.type._(cli_args.pop())
-            use_args = self.arguments.get_indexed_values()
-            if all(map(lambda x: x is not None, use_args)):
-                cli_args.reverse()
-                return use_args, cli_args
-            else:
-                raise NotImplementedError('Mandatory argument is not present')
-        else:
-            raise NotImplementedError('Command with SYNTAX without ARGOS')

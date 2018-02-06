@@ -355,7 +355,7 @@ class Node(object):
             _, arg_value = value.split('=')
         else:
             arg_value = value
-        arg_value = self.argo.type._(arg_value)
+        arg_value = self.argo.type.get_value(arg_value)
         return arg_value
 
     def store_value_in_argo(self, value, matched=False):
@@ -641,7 +641,7 @@ class FreeformNode(Node):
         Returns:
             str : String mapped for the given node.
         """
-        value = self.argo.type._(value)
+        value = self.argo.type.get_value(value)
         return value
 
     def find_by_name(self, name, **kwargs):

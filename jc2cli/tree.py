@@ -1,4 +1,5 @@
 from jc2cli.node import Node
+from jc2cli.error_handler import CliException
 
 
 class Tree(object):
@@ -155,7 +156,7 @@ class Tree(object):
             command = node.command
             line = kwargs.get('line', None)
             if command.rules is None:
-                use_args, cli_args = command.build_command_arguments_from_argos(line)
+                raise CliException('Command {0} does not have syntax.'.format(command.name))
             else:
                 cli_args = None
                 use_args = command.build_command_arguments_from_syntax(line)

@@ -80,7 +80,7 @@ class CliType(object):
             self.argo.value = value
 
     @staticmethod
-    def _(val):
+    def get_value(val):
         """Method that types any value as Tenant.
 
         Args:
@@ -185,7 +185,7 @@ class Prefix(CliType):
         pass
 
     @staticmethod
-    def _(val):
+    def get_value(val):
         """Method that types any value as Tenant.
 
         Args:
@@ -246,7 +246,7 @@ class Int(CliType):
     """
 
     @staticmethod
-    def _(val):
+    def get_value(val):
         """Method that types any value as integer.
 
         Args:
