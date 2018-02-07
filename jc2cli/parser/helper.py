@@ -9,7 +9,7 @@ __docformat__ = 'restructuredtext en'
 #             |_|
 # -----------------------------------------------------------------------------
 #
-import jc2cli.loggerator as loggerator
+import jc2cli.tools.loggerator as loggerator
 
 
 # -----------------------------------------------------------------------------

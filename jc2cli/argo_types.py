@@ -49,6 +49,7 @@ class CliType(object):
         """
         self.argo = kwargs.get('argo', None)
         self.label = kwargs.get('label', None)
+        self.help_str = kwargs.get('help', None)
 
     def is_lined(self):
         """is_lined method returns if the argument type process the whole line
@@ -93,7 +94,7 @@ class CliType(object):
         Returns:
             str : string with help to send to the display.
         """
-        return self._help_str()
+        return self.help_str if self.help_str else self._help_str()
 
     def get_complete_list(self, document, text):
         """get_complete_list method gets a list with all possible options to

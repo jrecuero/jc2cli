@@ -48,12 +48,12 @@ class Argument(object):
     case it will be passed to the command function as a list.
     """
 
-    def __init__(self, name, argtype, **kwargs):
+    def __init__(self, name, type_instance, **kwargs):
         """Argument class initialization method.
 
         Args:
             name (str) : String with the argument name.
-            argtype (type) : Argument type (class name).
+            type_instance (type) : Argument type (class name).
             default (object) : Default value for the argument.
             completer (object) : Argument completer instance.
             completer_kwargs (:class:`dict`) : Dictionary with\
@@ -63,7 +63,7 @@ class Argument(object):
             None
         """
         self.name = name
-        self.type = argtype
+        self.type = type_instance
         self.default = kwargs.get('default', None)
         self.value = kwargs.get('default', None)
         completer_class = kwargs.get('completer', None)
@@ -71,7 +71,9 @@ class Argument(object):
         if completer_class:
             self.completer = completer_class(argo=self, **completer_kwargs)
         else:
-            self.completer = argtype(argo=self, **completer_kwargs)
+            # self.completer = type_instance(argo=self, **completer_kwargs)
+            self.completer = type_instance
+            self.completer.argo = self
         self.matched = 0
 
     def is_lined(self):

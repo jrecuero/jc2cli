@@ -40,16 +40,18 @@ logger = loggerator.getLoggerator(MODULE)
 #
 # -----------------------------------------------------------------------------
 #
-
-
 class Command(object):
 
     def __init__(self, cb):
         self.cb = cb
         self._syntax = None
+        self.syntax_root = None
         self.name = None
         self.rules = None
         self.arguments = Arguments()
+
+    def __str__(self):
+        return '{0}:{1}'.format(self.__class__.__name__, self.name)
 
     @property
     def syntax(self):
