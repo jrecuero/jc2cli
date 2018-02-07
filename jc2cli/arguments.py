@@ -73,7 +73,12 @@ class Argument(object):
         else:
             self.completer = argtype(argo=self, **completer_kwargs)
         self.matched = 0
-        self.journal = None
+
+    def is_lined(self):
+        if hasattr(self.completer, 'is_lined'):
+            return self.completer.is_lined()
+        else:
+            return False
 
 
 class Arguments(object):
@@ -225,3 +230,6 @@ class Arguments(object):
             list : List with all arguments indexed by argument name.
         """
         return list(self.indexed)
+
+    def len(self):
+        return len(self.arguments)

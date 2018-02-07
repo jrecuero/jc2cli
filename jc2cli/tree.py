@@ -146,7 +146,6 @@ class Tree(object):
 
     @classmethod
     def run(cls, command_name, *args, **kwargs):
-
         #  node = cls.get_node(command_name)
         #  if node and node.command:
         #      return node.command.cb(*args, **kwargs)
@@ -157,14 +156,12 @@ class Tree(object):
             line = kwargs.get('line', None)
             if command.rules is None:
                 raise CliException('Command {0} does not have syntax.'.format(command.name))
+            elif command.is_lined():
+                use_args = [line, ]
             else:
-                cli_args = None
                 use_args = command.build_command_arguments_from_syntax(line)
             if use_args is not None:
-                if cli_args:
-                    return command.cb(*args, *use_args, cli_args)
-                else:
-                    return command.cb(*args, *use_args)
+                return command.cb(*args, *use_args)
 
     @classmethod
     def run_none(cls, command_name, *args, **kwargs):

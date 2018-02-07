@@ -64,6 +64,15 @@ class Command(object):
     def add_argument(self, argument):
         self.arguments.insert_argument(argument)
 
+    def len_arguments(self):
+        return self.arguments.len()
+
+    def is_lined(self):
+        for x in self.arguments.traverse():
+            if x.is_lined():
+                return True
+        return False
+
     def build_command_parsing_tree(self):
         """Build the command parsing tree using the command arguments and the
         command syntax.

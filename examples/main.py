@@ -1,19 +1,26 @@
 from jc2cli.decorators import command, mode, argo
-from jc2cli.argo_types import Str, Int
+from jc2cli.argo_types import Str, Int, Line
 
 
 @command('START app default')
 @argo('app', Str, "none")
 @argo('default', Str)
 def start(app, default):
-    print('start: running in main module with {0} and {1}'.format(app, default))
+    print('START: running in main module with "{0}" and "{1}"'.format(app, default))
     return True
 
 
-@command("END time")
+@command('END time')
 @argo('time', Int, 0)
 def end(time):
-    print('end: running in main module at {0}'.format(time))
+    print('END: running in main module at {0}'.format(time))
+    return True
+
+
+@command('TIME line')
+@argo('line', Line, None)
+def the_time(line):
+    print('TIME: running in main module with line: "{0}"'.format(line))
     return True
 
 

@@ -50,17 +50,14 @@ class CliType(object):
         self.argo = kwargs.get('argo', None)
         self.label = kwargs.get('label', None)
 
-    @property
-    def journal(self):
-        """Get property that returns the argument journal.
-
-        Returns:
-            Journal : journal instance.
+    def is_lined(self):
+        """is_lined method returns if the argument type process the whole line
+        entered by the user.
         """
-        return self.argo.journal
+        return False
 
     def store(self, value, matched=False):
-        """Stores a value in the argument for the type.
+        """store method stores a value in the argument for the type.
 
         Args:
             value (object) : Value to store in the argument.
@@ -79,20 +76,8 @@ class CliType(object):
         else:
             self.argo.value = value
 
-    @staticmethod
-    def get_value(val):
-        """Method that types any value as Tenant.
-
-        Args:
-            val (object): value to be typed as Tenant.
-
-        Returns:
-            str : String with the typed value.
-        """
-        return str(val)
-
     def _help_str(self):
-        """Method that should return default string to be displayed as help.
+        """_help_str method returns default string to be displayed as help.
 
         Returns:
             str : string with default help.
@@ -100,7 +85,7 @@ class CliType(object):
         return ''
 
     def help(self, text):
-        """Method that returns the help for the given argument.
+        """help method returns the help for the given argument.
 
         Args:
             text (str): last token in the line being entered.
@@ -111,7 +96,8 @@ class CliType(object):
         return self._help_str()
 
     def get_complete_list(self, document, text):
-        """Gets a list with all possible options to be included in complete.
+        """get_complete_list method gets a list with all possible options to
+        be included in complete.
 
         Args:
             document (object) : document object with all command line
@@ -125,7 +111,7 @@ class CliType(object):
         return None
 
     def complete(self, document, text):
-        """Method that returns the completion for the given argument.
+        """complete method returns the completion for the given argument.
 
         Args:
             document (object) : document object with all command line
@@ -144,9 +130,30 @@ class CliType(object):
                 return [x for x in options if x.startswith(text)]
         return None
 
+    def validate(self, value):
+        """validate method returns if value entered by the user is valid for
+        argument type.
+
+        Validation should be called before value is stored in Argument
+        instance.
+        """
+        return True
+
+    @staticmethod
+    def get_value(value):
+        """get_value method types any value as Tenant.
+
+        Args:
+            value (object): value to be typed as Tenant.
+
+        Returns:
+            str : String with the typed value.
+        """
+        return str(value)
+
     @staticmethod
     def type():
-        """Method that returns the type used for the given argument.
+        """type method returns the type used for the given argument.
 
         Returns:
             type : argument type.
@@ -161,17 +168,8 @@ class Prefix(CliType):
     nodes.
     """
 
-    @property
-    def journal(self):
-        """Get property that returns the argument journal.
-
-        Returns:
-            Journal : journal instance.
-        """
-        return None
-
     def store(self, value, matched=False):
-        """Stores a value in the argument for the type.
+        """store method stores a value in the argument for the type.
 
         Args:
             value (object) : Value to store in the argument.
@@ -184,20 +182,8 @@ class Prefix(CliType):
         """
         pass
 
-    @staticmethod
-    def get_value(val):
-        """Method that types any value as Tenant.
-
-        Args:
-            val (object): value to be typed as Tenant.
-
-        Returns:
-            str : Sring with the typed value.
-        """
-        return str(val)
-
     def _help_str(self):
-        """Method that should return default string to be displayed as help.
+        """_help_str method returns default string to be displayed as help.
 
         Returns:
             str : string with default help.
@@ -205,7 +191,7 @@ class Prefix(CliType):
         return '-{0}'.format(self.label)
 
     def help(self, text):
-        """Method that returns the help for the given argument.
+        """help method returns the help for the given argument.
 
         Args:
             text (str): last token in the line being entered.
@@ -216,7 +202,7 @@ class Prefix(CliType):
         return self._help_str()
 
     def complete(self, document, text):
-        """Method that returns the completion for the given argument.
+        """complete method returns the completion for the given argument.
 
         Args:
             document (object) : document object with all command line
@@ -230,8 +216,20 @@ class Prefix(CliType):
         return ['-{0}'.format(self.label), ]
 
     @staticmethod
+    def get_value(value):
+        """get_value method types any value as Tenant.
+
+        Args:
+            value (object): value to be typed as Tenant.
+
+        Returns:
+            str : Sring with the typed value.
+        """
+        return str(value)
+
+    @staticmethod
     def type():
-        """Method that returns the type used for the given argument.
+        """type method returns the type used for the given argument.
 
         Returns:
             type : argument type.
@@ -245,29 +243,35 @@ class Int(CliType):
     """Int class is the class for any integer argument.
     """
 
-    @staticmethod
-    def get_value(val):
-        """Method that types any value as integer.
-
-        Args:
-            val (object): value to be typed as integer.
-
-        Returns:
-            int : Integer with the typed value.
-        """
-        return int(val)
-
     def _help_str(self):
-        """Method that should return default string to be displayed as help.
+        """_help_str method returns default string to be displayed as help.
 
         Returns:
             str : string with default help.
         """
         return 'Enter a number'
 
+    def validate(self, value):
+        """validate method returns if value entered by the user is valid for
+        argument type.
+        """
+        return isinstance(value, int)
+
+    @staticmethod
+    def get_value(value):
+        """get_value method types any value as Tenant.
+
+        Args:
+            value (object): value to be typed as integer.
+
+        Returns:
+            int : Integer with the typed value.
+        """
+        return int(value)
+
     @staticmethod
     def type():
-        """Method that returns the type used for the given argument.
+        """type method returns the type used for the given argument.
 
         Returns:
             type : argument type.
@@ -282,7 +286,7 @@ class Str(CliType):
     """
 
     def _help_str(self):
-        """Method that should return default string to be displayed as help.
+        """_help_str method returns default string to be displayed as help.
 
         Returns:
             str : string with default help.
@@ -297,7 +301,7 @@ class Dicta(Str):
     """
 
     def store(self, value, matched=False):
-        """Stores a value in the argument for the type.
+        """store method stores a value in the argument for the type.
 
         Args:
             value (object) : Value to store in the argument.
@@ -308,8 +312,25 @@ class Dicta(Str):
         Returns:
             None
         """
-        name, val = value.split('=')
+        key, val = value.split('=')
         if matched:
-            self.argo.value.update({name: val})
+            self.argo.value.update({key: val})
         else:
-            self.argo.value = {name: val}
+            self.argo.value = {key: val}
+
+    def validate(self, value):
+        """validate method returns if value entered by the user is valid for
+        argument type.
+        """
+        return '=' in value
+
+
+# -----------------------------------------------------------------------------
+#
+class Line(CliType):
+
+    def is_lined(self):
+        """is_lined method returns if the argument type process the whole line
+        entered by the user.
+        """
+        return True
