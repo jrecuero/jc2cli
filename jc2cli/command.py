@@ -47,6 +47,7 @@ class Command(object):
         self._syntax = None
         self.syntax_root = None
         self.name = None
+        self.help = None
         self.rules = None
         self.arguments = Arguments()
 

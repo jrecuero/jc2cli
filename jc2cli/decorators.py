@@ -88,3 +88,17 @@ def argo(argo_name, argo_type, argo_default=None):
         node.command.add_argument(argument)
         return _wrapper
     return argo_wrapper
+
+
+def help(help_str):
+
+    def help_wrapper(f):
+
+        @wraps(f)
+        def _wrapper(*args, **kwargs):
+            return f(*args, **kwargs)
+
+        node = Tree.fnode(f, _wrapper)
+        node.command.help = help_str
+        return _wrapper
+    return help_wrapper
