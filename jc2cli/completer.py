@@ -9,7 +9,6 @@ __docformat__ = 'restructuredtext en'
 #             |_|
 # -----------------------------------------------------------------------------
 #
-from jc2cli.tree import Tree
 import jc2cli.tools.loggerator as loggerator
 from prompt_toolkit.completion import Completer, Completion
 
@@ -59,7 +58,7 @@ class CliCompleter(Completer):
                 return
             last_token = line_as_list[-1] if line_str[-1] != ' ' else ' '
             command_label = line_as_list[0]
-            command = Tree.get_node(command_label).command
+            command = self._cli.context.root.get_node(command_label).command
             if command is not None:
                 root = command.syntax_root
                 cli_args = command.get_cli_args(" ".join(line_as_list[1:]))

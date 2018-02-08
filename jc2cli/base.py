@@ -59,12 +59,13 @@ class Base(object):
     """Base class is the cli base class.
     """
 
-    def __init__(self, namespace, commands, handler):
+    def __init__(self, ns_handler):
         """__init__ method is the Base class constructor.
         """
-        self.namespace = namespace
-        self.commands = commands
-        self.handler  = handler
+        self.ns_handler = ns_handler
+        self.commands = self.ns_handler.commands
+        self.handler  = self.ns_handler.handler
+        self.context = self.ns_handler.context
         self.toolbar_str = ''
         self.prompt_str = "> "
         self.rprompt_str = ''
