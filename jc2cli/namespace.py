@@ -40,8 +40,6 @@ logger = loggerator.getLoggerator(MODULE)
 #
 # -----------------------------------------------------------------------------
 #
-
-
 class NameSpace(object):
 
     def __init__(self, namespace, context, **kwargs):
@@ -50,7 +48,12 @@ class NameSpace(object):
         self.ns_module = kwargs.get('ns_module', namespace)
         self.handler = kwargs.get('handler', handler)
         self.handler = partial(self.handler, self)
-        self.commands = self.start_commands()
+        self.commands = None
+        if kwargs.get('start', False):
+            self.commands = self.start_commands()
+        else:
+            self.context.root.create(self.namespace)
+        logger.trace('NameSpace {0} with {1}'.format(self.namespace, self.commands.keys() if self.commands else None))
         self.cli_class = kwargs.get('cli_class', Base)
         self.cli = self.create_cli()
 
@@ -72,6 +75,12 @@ class NameSpace(object):
         self.switch_to()
         self.run_cli(*args, **kwargs)
 
+    def update_commands(self, commands):
+        self.commands = commands
+        # self.cli.commands = self.commands
+        logger.trace('NameSpace {0} with {1}'.format(self.namespace, self.commands.keys() if self.commands else None))
+        logger.trace('cli commands {0}'.format(self.cli.commands.keys() if self.cli.commands else None))
+
 
 class Handler(object):
 
@@ -83,12 +92,14 @@ class Handler(object):
         return Context(self.context.root)
 
     def create_namespace(self, namespace, **kwargs):
-        new_ns_handler = NameSpace(namespace, self.new_ns_context(), **kwargs)
+        new_ns_handler = NameSpace(namespace, self.new_ns_context(), start=False, **kwargs)
         self.ns_handlers[namespace] = new_ns_handler
-        if kwargs.get('with_defaults', True):
-            self.extend_namespace(namespace, defaults_namespace())
-        if kwargs.get('with_class_defaults', False):
+        if kwargs.get('is_class_cmd', False):
             self.extend_namespace(namespace, class_defaults_namespace())
+        else:
+            self.extend_namespace(namespace, defaults_namespace())
+        self.ns_module = kwargs.get('ns_module', namespace)
+        self.extend_namespace(namespace, self.ns_module)
         return new_ns_handler
 
     def remove_namespace(self, namespace):
@@ -102,7 +113,8 @@ class Handler(object):
 
     def extend_namespace(self, namespace, ns_extended):
         if namespace in self.ns_handlers:
-            self.context.root.extend(namespace, ns_extended)
+            commands = self.context.root.extend(namespace, ns_extended)
+            self.get_namespace(namespace).update_commands(commands)
             return True
         return False
 

@@ -14,11 +14,10 @@ class RunCli(object):
         handler.create_namespace('cli',
                                  ns_module='examples.work.main.Cli',
                                  handler=handler_none,
-                                 with_class_defaults=True)
+                                 is_class_cmd=True)
         handler.create_namespace('main',
                                  ns_module='examples.work.main',
-                                 handler=partial(handler_mode, handler.get_namespace('cli')),
-                                 with_defaults=True)
+                                 handler=partial(handler_mode, handler.get_namespace('cli')))
         handler.switch_and_run_namespace('main')
 
 

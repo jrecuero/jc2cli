@@ -1,7 +1,41 @@
+__docformat__ = 'restructuredtext en'
+
+# -----------------------------------------------------------------------------
+#  _                            _
+# (_)_ __ ___  _ __   ___  _ __| |_ ___
+# | | '_ ` _ \| '_ \ / _ \| '__| __/ __|
+# | | | | | | | |_) | (_) | |  | |_\__ \
+# |_|_| |_| |_| .__/ \___/|_|   \__|___/
+#             |_|
+# -----------------------------------------------------------------------------
+#
 from jc2cli.node import Node
 from jc2cli.error_handler import CliException
+import jc2cli.tools.loggerator as loggerator
 
 
+# -----------------------------------------------------------------------------
+#
+#   ___ ___  _ __  ___| |_ __ _ _ __ | |_ ___
+#  / __/ _ \| '_ \/ __| __/ _` | '_ \| __/ __|
+# | (_| (_) | | | \__ \ || (_| | | | | |_\__ \
+#  \___\___/|_| |_|___/\__\__,_|_| |_|\__|___/
+#
+# -----------------------------------------------------------------------------
+#
+MODULE = 'CLI.tree'
+logger = loggerator.getLoggerator(MODULE)
+
+
+# -----------------------------------------------------------------------------
+#       _                     _       __ _       _ _   _
+#   ___| | __ _ ___ ___    __| | ___ / _(_)_ __ (_) |_(_) ___  _ __  ___
+#  / __| |/ _` / __/ __|  / _` |/ _ \ |_| | '_ \| | __| |/ _ \| '_ \/ __|
+# | (__| | (_| \__ \__ \ | (_| |  __/  _| | | | | | |_| | (_) | | | \__ \
+#  \___|_|\__,_|___/___/  \__,_|\___|_| |_|_| |_|_|\__|_|\___/|_| |_|___/
+#
+# -----------------------------------------------------------------------------
+#
 class Tree(object):
 
     __ROOT = None
@@ -22,7 +56,7 @@ class Tree(object):
             return self.__db
 
         def add_node(self, key, node):
-            print('Add node {0} to tree {1}'.format(key, self.name))
+            logger.trace('node {0} to tree {1}'.format(key, self.name))
             if key not in self.__db:
                 self.__db[key] = node
             return self.__db[key]
@@ -60,6 +94,7 @@ class Tree(object):
     @classmethod
     def extend_command_tree(cls, namespace, command_tree):
         if namespace in cls.__COMMAND_TREE.keys():
+            logger.trace('namespace {0} with {1}'.format(namespace, command_tree.keys()))
             cls.__COMMAND_TREE[namespace].update(command_tree)
             return cls.__COMMAND_TREE[namespace]
         return None
@@ -90,6 +125,7 @@ class Tree(object):
         # Command tree can not have duplicated commands (same command name).
         # Check if there are any duplicated command (based on command name).
         assert len(traverse.keys()) == len(set([v.command.name for v in traverse.values()])), 'Duplicated Commands'
+        logger.trace('ns_module {0} : {1}'.format(ns_module, traverse.keys()))
         return {v.command.name: v for (k, v) in traverse.items()}
 
     @classmethod

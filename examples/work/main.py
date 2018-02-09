@@ -54,6 +54,12 @@ def tenant(tname):
     return True
 
 
+@command('exit')
+def do_exit():
+    print('this is a new exit')
+    return False
+
+
 @mode("CLI", "examples.work.main.Cli")
 def cli():
     return True

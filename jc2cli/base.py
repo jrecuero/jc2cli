@@ -63,12 +63,21 @@ class Base(object):
         """__init__ method is the Base class constructor.
         """
         self.ns_handler = ns_handler
-        self.commands = self.ns_handler.commands
-        self.handler  = self.ns_handler.handler
-        self.context = self.ns_handler.context
         self.toolbar_str = ''
         self.prompt_str = "> "
         self.rprompt_str = ''
+
+    @property
+    def commands(self):
+        return self.ns_handler.commands
+
+    @property
+    def handler(self):
+        return self.ns_handler.handler
+
+    @property
+    def context(self):
+        return self.ns_handler.context
 
     @staticmethod
     def get_command_from_line(line):
