@@ -49,12 +49,11 @@ def handler_none(ns_handler, command_name, *args, **kwargs):
     return root.run_instance(command_name, None, *args, **kwargs)
 
 
-def handler_mode(mode_ns_handler, ns_handler, command_name, *args, **kwargs):
+def handler_mode(child_ns_handler, ns_handler, command_name, *args, **kwargs):
     root = ns_handler.context.root
     node = root.get_node(command_name)
     result = root.run(command_name, *args, **kwargs)
-    active_namespace = root.active_namespace()
     if node.is_mode() and result:
-        mode_ns_handler.switch_and_run(*args, **kwargs)
-        root.switch_to(active_namespace)
+        child_ns_handler.switch_and_run(*args, **kwargs)
+        ns_handler.switch_to()
     return result

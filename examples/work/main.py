@@ -54,7 +54,7 @@ def tenant(tname):
     return True
 
 
-@mode("CLI", "examples.main.Cli")
+@mode("CLI", "examples.work.main.Cli")
 def cli():
     return True
 
