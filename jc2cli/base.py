@@ -240,25 +240,45 @@ class Base(object):
         """
         return True
 
-    def handle_line(self, line):
-        """handle_line method handles the line entered by the user in the
+    def pre_command(self, command, user_input):
+        """pre_command is called before any command has being processed.
+        """
+        return True
+
+    def post_command(self, command, user_input, cmd_cb_result):
+        """post_command is called after any command has being processed.
+        """
+        return True
+
+    def exec_user_input(self, user_input, *args, **kwargs):
+        """exec_user_input method handles the line entered by the user in the
         prompt_toolkit.
         """
-        if not line.strip():
+        if not user_input.strip():
             if self.empty_line():
                 return True
             else:
                 return False
 
-        print('You entered: {}'.format(line))
-        command, params = Base.get_command_from_line(line)
-        self.record_command(line)
-        result = self.handler(command, line=params)
-        if result is None:
-            print('Unknown command: {}'.format(line))
-        elif not result:
-            return False
-        return True
+        pre_return = True
+        cb_return = True
+        post_return = True
+        command, params = Base.get_command_from_line(user_input)
+        if kwargs.get('pre_cmd', False):
+            pre_return = self.pre_command(command, user_input)
+        # pre_command callback return value can be used to skip command
+        # of it returns False.
+        if pre_return:
+            self.record_command(user_input)
+            cb_return = self.handler(command, line=params)
+        # post_command callback return value can be used to exit the
+        # command loop if it returns False..
+        if kwargs.get('post_cmd', False):
+            post_return = self.post_command(command, user_input, cb_return)
+        if cb_return is None:
+            print('Unknown command: {}'.format(user_input))
+            cb_return = True
+        return cb_return and post_return
 
     def run_prompt(self, **kwargs):
         """Execute the command line.
@@ -318,7 +338,7 @@ class Base(object):
         """
         while True:
             user_input = self.run_prompt(*args, **kwargs)
-            if not self.handle_line(user_input):
+            if not self.exec_user_input(user_input, *args, **kwargs):
                 break
 
     def run(self, *args, **kwargs):
@@ -346,6 +366,41 @@ class Base(object):
         except KeyboardInterrupt:
             logger.display("")
             pass
+
+    def load_commands_from_json(self, json_data):
+        """Loads CLI commands from a JSON variable.
+
+        The content of the JSON data should be a list of dictionaries, where
+        every dictionary at least shoudl contain a field called 'command'
+        which will contains the command to be executed.
+
+        Args:
+            json_data (json) : Variable with JSON data.
+
+        Returns:
+            None
+        """
+        lista = json.loads(json_data)
+        for entry in lista:
+            self.exec_user_input(entry['command'])
+
+    def load_commands_from_file(self, filename):
+        """Loads a file with the given filename with CLI commands in
+        JSON format.
+
+        Args:
+            filename (string) : String with the filename that contains\
+                    the json data.
+
+        Returns:
+            None
+        """
+        try:
+            with open(filename, 'r') as f:
+                data = json.load(f)
+            self.load_commands_from_json(json.dumps(data))
+        except OSError:
+            logger.error('File not found {}'.format(filename), out=True)
 
 
 if __name__ == '__main__':
