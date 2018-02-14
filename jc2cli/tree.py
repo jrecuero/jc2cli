@@ -181,7 +181,7 @@ class Tree(object):
         return cls.command_tree().get(command_name, None)
 
     @classmethod
-    def run(cls, command_name, *args, **kwargs):
+    def run(cls, command_name, context, *args, **kwargs):
         #  node = cls.get_node(command_name)
         #  if node and node.command:
         #      return node.command.cb(*args, **kwargs)
@@ -197,18 +197,21 @@ class Tree(object):
             else:
                 use_args = command.build_command_arguments_from_syntax(line)
             if use_args is not None:
+                if command.internal:
+                    args = list(args)
+                    args.append(context)
                 return command.cb(*args, *use_args)
 
     @classmethod
-    def run_none(cls, command_name, *args, **kwargs):
+    def run_none(cls, command_name, context, *args, **kwargs):
         """run_none methods execute a callback when it is defined as a class
         method but it does not make use of the class instance in the callback.
         """
-        return cls.run(command_name, None, *args, **kwargs)
+        return cls.run(command_name, context, None, *args, **kwargs)
 
     @classmethod
-    def run_instance(cls, command_name, instance, *args, **kwargs):
+    def run_instance(cls, command_name, context, instance, *args, **kwargs):
         """run_instance methods execute a callback when it is defined as a
         class method. It receives the instance to be used.
         """
-        return cls.run(command_name, instance, *args, **kwargs)
+        return cls.run(command_name, context, instance, *args, **kwargs)

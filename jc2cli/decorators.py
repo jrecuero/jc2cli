@@ -37,6 +37,27 @@ logger = loggerator.getLoggerator(MODULE)
 #
 # -----------------------------------------------------------------------------
 #
+def _command(f, wrapper, syntax, namespace, internal=False):
+    logger.display('command : syntax : {0}'.format(syntax))
+    node = Tree.fnode(f, wrapper)
+    node.command.syntax = syntax
+    node.command.internal = internal
+    if namespace:
+        Tree().rename_node(node.name, '{0}.{1}'.format(namespace, f.__qualname__))
+    node.command.build_command_parsing_tree()
+
+
+def _mode(f, wrapper, syntax, ns_mode, namespace, internal=False):
+    logger.display('mode : syntax : {0} : namespace {1}'.format(syntax, ns_mode))
+    node = Tree.fnode(f, wrapper, mode=True)
+    node.command.syntax = syntax
+    node.command.namespace = ns_mode
+    node.command.internal = internal
+    if namespace:
+        Tree().rename_node(node.name, '{0}.{1}'.format(namespace, f.__qualname__))
+    node.command.build_command_parsing_tree()
+
+
 def command(syntax, namespace=None):
 
     def command_wrapper(f):
@@ -45,12 +66,20 @@ def command(syntax, namespace=None):
         def _wrapper(*args, **kwargs):
             return f(*args, **kwargs)
 
-        print('command : syntax : {0}'.format(syntax))
-        node = Tree.fnode(f, _wrapper)
-        node.command.syntax = syntax
-        if namespace:
-            Tree().rename_node(node.name, '{0}.{1}'.format(namespace, f.__qualname__))
-        node.command.build_command_parsing_tree()
+        _command(f, _wrapper, syntax, namespace)
+        return _wrapper
+    return command_wrapper
+
+
+def icommand(syntax, namespace=None):
+
+    def command_wrapper(f):
+
+        @wraps(f)
+        def _wrapper(*args, **kwargs):
+            return f(*args, **kwargs)
+
+        _command(f, _wrapper, syntax, namespace, internal=True)
         return _wrapper
     return command_wrapper
 
@@ -63,13 +92,20 @@ def mode(syntax, ns_mode, namespace=None):
         def _wrapper(*args, **kwargs):
             return f(*args, **kwargs)
 
-        print('mode : syntax : {0} : namespace {1}'.format(syntax, ns_mode))
-        node = Tree.fnode(f, _wrapper, mode=True)
-        node.command.syntax = syntax
-        node.command.namespace = ns_mode
-        if namespace:
-            Tree().rename_node(node.name, '{0}.{1}'.format(namespace, f.__qualname__))
-        node.command.build_command_parsing_tree()
+        _mode(f, _wrapper, syntax, ns_mode, namespace)
+        return _wrapper
+    return mode_wrapper
+
+
+def imode(syntax, ns_mode, namespace=None):
+
+    def mode_wrapper(f):
+
+        @wraps(f)
+        def _wrapper(*args, **kwargs):
+            return f(*args, **kwargs)
+
+        _mode(f, _wrapper, syntax, ns_mode, namespace, internal=True)
         return _wrapper
     return mode_wrapper
 
@@ -82,7 +118,7 @@ def argo(argo_name, argo_type, argo_default=None):
         def _wrapper(*args, **kwargs):
             return f(*args, **kwargs)
 
-        print('called for {0}'.format(argo_name))
+        logger.display('called for {0}'.format(argo_name))
         node = Tree.fnode(f, _wrapper)
         argument = Argument(argo_name, argo_type, default=argo_default)
         node.command.add_argument(argument)

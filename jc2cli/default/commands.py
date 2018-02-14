@@ -1,5 +1,11 @@
 from jc2cli.tree import Tree
-from jc2cli.decorators import command, help
+from jc2cli.decorators import command, help, icommand
+
+
+@icommand('start-record')
+def do_start_record(context):
+    print('i got the context: {}'.format(context))
+    return True
 
 
 @command('exit')
@@ -38,6 +44,11 @@ class Defaults(object):
         @help('Display this help information.')
         def do_help(self):
             return do_help()
+
+        @icommand('start-record')
+        @help('Start recording commands.')
+        def do_start_record(self, context):
+            return do_start_record(context)
 
 
 def defaults_namespace():

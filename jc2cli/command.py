@@ -49,6 +49,7 @@ class Command(object):
         self.name = None
         self.help = None
         self.rules = None
+        self.internal = False
         self.arguments = Arguments()
 
     def __str__(self):

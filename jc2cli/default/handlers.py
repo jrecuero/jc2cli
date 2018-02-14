@@ -35,24 +35,24 @@ logger = loggerator.getLoggerator(MODULE)
 # -----------------------------------------------------------------------------
 #
 def handler(ns_handler, command_name, *args, **kwargs):
-    root = ns_handler.context.root
-    return root.run(command_name, *args, **kwargs)
+    context = ns_handler.context
+    return context.root.run(command_name, context, *args, **kwargs)
 
 
 def handler_instance(ns_handler, command_name, instance, *args, **kwargs):
-    root = ns_handler.context.root
-    return root.run_instance(command_name, instance, *args, **kwargs)
+    context = ns_handler.contex
+    return context.root.run_instance(command_name, context, instance, *args, **kwargs)
 
 
 def handler_none(ns_handler, command_name, *args, **kwargs):
-    root = ns_handler.context.root
-    return root.run_instance(command_name, None, *args, **kwargs)
+    context = ns_handler.context
+    return context.root.run_instance(command_name, context, None, *args, **kwargs)
 
 
 def handler_mode(child_ns_handler, ns_handler, command_name, *args, **kwargs):
-    root = ns_handler.context.root
-    node = root.get_node(command_name)
-    result = root.run(command_name, *args, **kwargs)
+    context = ns_handler.context
+    node = context.root.get_node(command_name)
+    result = context.root.run(command_name, context, *args, **kwargs)
     if node.is_mode() and result:
         child_ns_handler.switch_and_run(*args, **kwargs)
         ns_handler.switch_to()
