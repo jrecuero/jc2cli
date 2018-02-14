@@ -51,9 +51,8 @@ def handler_none(ns_handler, command_name, *args, **kwargs):
 
 def handler_mode(child_ns_handler, ns_handler, command_name, *args, **kwargs):
     root = ns_handler.context.root
-    node = root.get_node(command_name)
     result = root.run(command_name, ns_handler, *args, **kwargs)
-    if node.is_mode() and result:
+    if result and root.get_node(command_name).is_mode():
         child_ns_handler.switch_and_run(*args, **kwargs)
         ns_handler.switch_to()
     return result

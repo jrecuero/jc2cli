@@ -1,5 +1,9 @@
 from jc2cli.decorators import command, argo
 from jc2cli.argo_types import Str
+import jc2cli.tools.loggerator as loggerator
+
+MODULE = 'EXAMPLES.WORK.config'
+logger = loggerator.getLoggerator(MODULE)
 
 
 class Cli(object):
@@ -11,4 +15,4 @@ class Cli(object):
     @argo('app', Str(), "none")
     @argo('default', Str(), "none")
     def config(self):
-        print('config: running in config module')
+        logger.display('config: running in config module')

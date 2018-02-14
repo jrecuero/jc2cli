@@ -1,11 +1,15 @@
 from jc2cli.decorators import command, argo
 from jc2cli.argo_types import Int
+import jc2cli.tools.loggerator as loggerator
+
+MODULE = 'EXAMPLES.WORK.execute'
+logger = loggerator.getLoggerator(MODULE)
 
 
 @command("START time", namespace='New')
 @argo('time', Int(), 0)
 def start():
-    print('config start: runnning in execute module renamed to New')
+    logger.display('config start: runnning in execute module renamed to New')
 
 
 class Cli(object):
@@ -16,4 +20,4 @@ class Cli(object):
     @command("EXEC time")
     @argo('time', Int(), 0)
     def execute(self):
-        print('exec: running in execute module execute.Cli class')
+        logger.display('exec: running in execute module execute.Cli class')

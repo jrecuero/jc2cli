@@ -24,7 +24,7 @@ import jc2cli.tools.loggerator as loggerator
 #
 # -----------------------------------------------------------------------------
 #
-MODULE = 'CLI.commands'
+MODULE = 'DEFAULTS.commands'
 logger = loggerator.getLoggerator(MODULE)
 
 
@@ -59,7 +59,7 @@ def do_display_recording(ns_handler, start, end):
 @help('Clear recorded command from [start-end].')
 @argo('start', Int(), 0)
 @argo('end', Int(), -1)
-def clear_recording(ns_handler, start, end):
+def do_clear_recording(ns_handler, start, end):
     end = None if end == -1 else end
     logger.display('clear-recording from {0} to {1}'.format(start, end))
     ns_handler.cli.clear_recording(start, end)
@@ -71,14 +71,24 @@ def clear_recording(ns_handler, start, end):
 @argo('filename', Str(), None)
 @argo('start', Int(), 0)
 @argo('end', Int(), -1)
-def save_recording(ns_handler, filename, start, end):
+def do_save_recording(ns_handler, filename, start, end):
     end = None if end == -1 else end
     logger.display('save-recording to {0} from {1} to {2}'.format(filename, start, end))
     ns_handler.cli.save_recording(filename, start, end)
     return True
 
 
+@icommand('import filename')
+@help('Import and execute commands from a file')
+@argo('filename', Str(), None)
+def do_import(ns_handler, filename):
+    logger.display('Import and execute commands from {0}'.format(filename))
+    ns_handler.cli.load_commands_from_file(filename)
+    return True
+
+
 @command('exit')
+@help('Exit')
 def do_exit():
     return False
 
@@ -102,6 +112,7 @@ def do_help():
 class Defaults(object):
 
         @command('exit')
+        @help('Exit')
         def do_exit(self):
             return do_exit()
 
@@ -119,6 +130,39 @@ class Defaults(object):
         @help('Start recording commands.')
         def do_start_recording(self, ns_handler):
             return do_start_recording(ns_handler)
+
+        @icommand('stop-recording')
+        @help('Stop recording commands.')
+        def do_stop_recording(self, ns_handler):
+            return do_stop_recording(ns_handler)
+
+        @icommand('display-recording [start]? [end]?')
+        @help('Display recorded command from [start-end].')
+        @argo('start', Int(), 0)
+        @argo('end', Int(), -1)
+        def do_display_recording(self, ns_handler, start, end):
+            return do_display_recording(ns_handler, start, end)
+
+        @icommand('clear-recording [start]? [end]?')
+        @help('Clear recorded command from [start-end].')
+        @argo('start', Int(), 0)
+        @argo('end', Int(), -1)
+        def do_clear_recording(self, ns_handler, start, end):
+            return do_clear_recording(ns_handler, start, end)
+
+        @icommand('save-recording filename [start]? [end]?')
+        @help('Save recorded command from [start-end].')
+        @argo('filename', Str(), None)
+        @argo('start', Int(), 0)
+        @argo('end', Int(), -1)
+        def do_save_recording(self, ns_handler, filename, start, end):
+            return do_save_recording(ns_handler, filename, start, end)
+
+        @icommand('import filename')
+        @help('Import and execute commands from a file')
+        @argo('filename', Str(), None)
+        def do_import(self, ns_handler, filename):
+            return do_import(ns_handler, filename)
 
 
 def defaults_namespace():

@@ -1,8 +1,10 @@
 from jc2cli.decorators import command, mode, argo
 from jc2cli.argo_types import Str, Int, Line, CliType
 from jc2cli.error_handler import CliValidationError
+import jc2cli.tools.loggerator as loggerator
 
-
+MODULE = 'EXAMPLES.WORK.main'
+logger = loggerator.getLoggerator(MODULE)
 database = ['COKE', 'PEPSI']
 
 
@@ -31,35 +33,35 @@ class T_Tenant(CliType):
 @argo('app', Str(help='Enter app name'), "none")
 @argo('default', Str(help='Enter default value'), "none")
 def start(app, default):
-    print('START: running in main module with "{0}" and "{1}"'.format(app, default))
+    logger.display('START: running in main module with "{0}" and "{1}"'.format(app, default))
     return True
 
 
 @command('SEED value')
 @argo('value', Int(help='Enter seed initial value'), 0)
 def seed(value):
-    print('SEED: running in main module with seed value {0}'.format(value))
+    logger.display('SEED: running in main module with seed value {0}'.format(value))
     return True
 
 
 @command('END time')
 @argo('time', Int(), 0)
 def end(time):
-    print('END: running in main module at {0}'.format(time))
+    logger.display('END: running in main module at {0}'.format(time))
     return True
 
 
 @command('TIME line')
 @argo('line', Line(), None)
 def the_time(line):
-    print('TIME: running in main module with line: "{0}"'.format(line))
+    logger.display('TIME: running in main module with line: "{0}"'.format(line))
     return True
 
 
 @command('TENANT tname')
 @argo('tname', T_Tenant(get_database_data), None)
 def tenant(tname):
-    print('TENANT: running in main module with tenant name: "{0}"'.format(tname))
+    logger.display('TENANT: running in main module with tenant name: "{0}"'.format(tname))
     return True
 
 
@@ -67,13 +69,13 @@ def tenant(tname):
 @argo('tname', Str(), None)
 def do_add_tenant(tname):
     database.append(tname)
-    print('ADD-TENANT: add tenant : "{0}"'.format(tname))
+    logger.display('ADD-TENANT: add tenant : "{0}"'.format(tname))
     return True
 
 
 @command('exit')
 def do_exit():
-    print('this is a new exit')
+    logger.display('this is a new exit')
     return False
 
 
@@ -91,11 +93,11 @@ class Cli(object):
     @argo('app', Str(help='Enter CLI application'), "none")
     @argo('default', Str(help='Enter CLI default value'), "none")
     def start(self, app, default):
-        print('start: running in main module main.Cli class with {0} and {1}'.format(app, default))
+        logger.display('start: running in main module main.Cli class with {0} and {1}'.format(app, default))
         return True
 
     @command("END time")
     @argo('time', Int(), 0)
     def end(self, time):
-        print('end: running in main module main.Cli class at {0}'.format(time))
+        logger.display('end: running in main module main.Cli class at {0}'.format(time))
         return True

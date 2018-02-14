@@ -22,7 +22,7 @@ from prompt_toolkit.completion import Completer, Completion
 #
 # -----------------------------------------------------------------------------
 #
-MODULE = 'CLI.base'
+MODULE = 'CLI.completer'
 logger = loggerator.getLoggerator(MODULE)
 
 
@@ -58,7 +58,10 @@ class CliCompleter(Completer):
                 return
             last_token = line_as_list[-1] if line_str[-1] != ' ' else ' '
             command_label = line_as_list[0]
-            command = self._cli.context.root.get_node(command_label).command
+            node = self._cli.context.root.get_node(command_label)
+            if not node:
+                return
+            command = node.command
             if command is not None:
                 root = command.syntax_root
                 cli_args = command.get_cli_args(" ".join(line_as_list[1:]))
