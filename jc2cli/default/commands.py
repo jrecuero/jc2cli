@@ -63,6 +63,7 @@ def clear_recording(ns_handler, start, end):
     end = None if end == -1 else end
     logger.display('clear-recording from {0} to {1}'.format(start, end))
     ns_handler.cli.clear_recording(start, end)
+    return True
 
 
 @icommand('save-recording filename [start]? [end]?')
@@ -73,7 +74,8 @@ def clear_recording(ns_handler, start, end):
 def save_recording(ns_handler, filename, start, end):
     end = None if end == -1 else end
     logger.display('save-recording to {0} from {1} to {2}'.format(filename, start, end))
-    ns_handler.cli.sace_recording(filename, start, end)
+    ns_handler.cli.save_recording(filename, start, end)
+    return True
 
 
 @command('exit')
