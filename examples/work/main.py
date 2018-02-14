@@ -1,21 +1,30 @@
 from jc2cli.decorators import command, mode, argo
 from jc2cli.argo_types import Str, Int, Line, CliType
+from jc2cli.error_handler import CliValidationError
+
+
+database = ['COKE', 'PEPSI']
+
+
+def get_database_data():
+    return database
 
 
 class T_Tenant(CliType):
 
-    DEFAULT = ["COMMON", "DEFAULT", "SINGLE", "MULTI"]
-
-    def __init__(self, default, **kwargs):
+    def __init__(self, db_data_cb, **kwargs):
         super(T_Tenant, self).__init__(**kwargs)
-        # self._tenants = T_Tenant.DEFAULT
-        self._tenants = default
+        self._tenants_cb = db_data_cb
 
     def _help_str(self):
         return 'Enter the Tenant where you want to go.'
 
     def get_complete_list(self, document, text):
-        return self._tenants
+        return self._tenants_cb()
+
+    def validate(self, value):
+        if value not in self._tenants_cb():
+            raise CliValidationError('MAIN', 'Validation Error: {}'.format(value))
 
 
 @command('START app default')
@@ -48,9 +57,17 @@ def the_time(line):
 
 
 @command('TENANT tname')
-@argo('tname', T_Tenant(['COKE', 'PEPSI']), None)
+@argo('tname', T_Tenant(get_database_data), None)
 def tenant(tname):
     print('TENANT: running in main module with tenant name: "{0}"'.format(tname))
+    return True
+
+
+@command('ADD-TENANT tname')
+@argo('tname', Str(), None)
+def do_add_tenant(tname):
+    database.append(tname)
+    print('ADD-TENANT: add tenant : "{0}"'.format(tname))
     return True
 
 

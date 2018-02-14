@@ -10,7 +10,7 @@ __docformat__ = 'restructuredtext en'
 # -----------------------------------------------------------------------------
 #
 from jc2cli.node import Node
-from jc2cli.error_handler import CliException
+from jc2cli.error_handler import CliError
 import jc2cli.tools.loggerator as loggerator
 
 
@@ -191,7 +191,7 @@ class Tree(object):
             command = node.command
             line = kwargs.get('line', None)
             if command.rules is None:
-                raise CliException('Command {0} does not have syntax.'.format(command.name))
+                raise CliError('Command {0} does not have syntax.'.format(command.name))
             elif command.is_lined():
                 use_args = [line, ]
             else:

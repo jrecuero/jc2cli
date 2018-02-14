@@ -140,20 +140,32 @@ class CliType(object):
         """
         return True
 
-    @staticmethod
-    def get_value(value):
-        """get_value method types any value as Tenant.
+    def _get_value(self, value):
+        """_get_value method types any value as CliType.
 
         Args:
-            value (object): value to be typed as Tenant.
+            value (object): value to be typed as CliType.
 
         Returns:
             str : String with the typed value.
         """
         return str(value)
 
-    @staticmethod
-    def type():
+    # @staticmethod
+    def get_value(self, value):
+        """get_value method types any value as CliType.
+
+        Args:
+            value (object): value to be typed as CliType.
+
+        Returns:
+            str : String with the typed value.
+        """
+        self.validate(value)
+        return self._get_value(value)
+
+    # @staticmethod
+    def type(self):
         """type method returns the type used for the given argument.
 
         Returns:
@@ -216,20 +228,19 @@ class Prefix(CliType):
         """
         return ['-{0}'.format(self.label), ]
 
-    @staticmethod
-    def get_value(value):
-        """get_value method types any value as Tenant.
+    def _get_value(self, value):
+        """_get_value method types any value as CliType.
 
         Args:
-            value (object): value to be typed as Tenant.
+            value (object): value to be typed as CliType.
 
         Returns:
             str : Sring with the typed value.
         """
         return str(value)
 
-    @staticmethod
-    def type():
+    # @staticmethod
+    def type(self):
         """type method returns the type used for the given argument.
 
         Returns:
@@ -258,9 +269,8 @@ class Int(CliType):
         """
         return isinstance(value, int)
 
-    @staticmethod
-    def get_value(value):
-        """get_value method types any value as Tenant.
+    def _get_value(self, value):
+        """_get_value method types any value as CliType.
 
         Args:
             value (object): value to be typed as integer.
@@ -270,8 +280,8 @@ class Int(CliType):
         """
         return int(value)
 
-    @staticmethod
-    def type():
+    # @staticmethod
+    def type(self):
         """type method returns the type used for the given argument.
 
         Returns:

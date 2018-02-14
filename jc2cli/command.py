@@ -11,7 +11,7 @@ __docformat__ = 'restructuredtext en'
 #
 import shlex
 from jc2cli.arguments import Arguments
-from jc2cli.error_handler import CliException
+from jc2cli.error_handler import CliError
 import jc2cli.parser.syntax_parser as syntax_parser
 import jc2cli.tools.loggerator as loggerator
 from jc2cli.parser.node import Start
@@ -132,11 +132,11 @@ class Command(object):
         """
         cli_args = self.get_cli_args(line)
         if len(cli_args)  < RH.syntax_min_args(self.rules):
-            raise CliException(MODULE, "Number of Args: Too few arguments")
+            raise CliError(MODULE, "Number of Args: Too few arguments")
 
         use_args = self.map_passed_args_to_command_arguments(cli_args)
         if use_args is None:
-            raise CliException(MODULE, 'Incorrect arguments')
+            raise CliError(MODULE, 'Incorrect arguments')
         if not all(map(lambda x: x is not None, use_args)):
-            raise CliException(MODULE, 'Mandatory argument is not present')
+            raise CliError(MODULE, 'Mandatory argument is not present')
         return use_args

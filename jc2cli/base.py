@@ -12,6 +12,7 @@ __docformat__ = 'restructuredtext en'
 import json
 import jc2cli.tools.loggerator as loggerator
 from jc2cli.completer import CliCompleter
+from jc2cli.error_handler import CliValidationError
 from prompt_toolkit import prompt
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -260,25 +261,31 @@ class Base(object):
             else:
                 return False
 
-        pre_return = True
-        cb_return = True
-        post_return = True
-        command, params = Base.get_command_from_line(user_input)
-        if kwargs.get('pre_cmd', False):
-            pre_return = self.pre_command(command, user_input)
-        # pre_command callback return value can be used to skip command
-        # of it returns False.
-        if pre_return:
-            self.record_command(user_input)
-            cb_return = self.handler(command, line=params)
-        # post_command callback return value can be used to exit the
-        # command loop if it returns False..
-        if kwargs.get('post_cmd', False):
-            post_return = self.post_command(command, user_input, cb_return)
-        if cb_return is None:
-            print('Unknown command: {}'.format(user_input))
+        try:
+            pre_return = True
             cb_return = True
-        return cb_return and post_return
+            post_return = True
+            command, params = Base.get_command_from_line(user_input)
+            if kwargs.get('pre_cmd', False):
+                pre_return = self.pre_command(command, user_input)
+            # pre_command callback return value can be used to skip command
+            # of it returns False.
+            if pre_return:
+                self.record_command(user_input)
+                cb_return = self.handler(command, line=params)
+            # post_command callback return value can be used to exit the
+            # command loop if it returns False..
+            if kwargs.get('post_cmd', False):
+                post_return = self.post_command(command, user_input, cb_return)
+            if cb_return is None:
+                print('Unknown command: {}'.format(user_input))
+                cb_return = True
+            return cb_return and post_return
+        except CliValidationError as ex:
+            error_message = 'Error: command [{0}] user_input: "{1}" exception: {2}'.format(command, user_input, ex.message)
+            logger.error(error_message)
+            logger.display(error_message)
+            return True
 
     def run_prompt(self, **kwargs):
         """Execute the command line.

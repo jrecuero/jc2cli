@@ -10,7 +10,7 @@ __docformat__ = 'restructuredtext en'
 # -----------------------------------------------------------------------------
 #
 from jc2cli.parser.rules import RuleHandler as RH
-from jc2cli.error_handler import CliException
+from jc2cli.error_handler import CliError
 # from jc2cli.argtypes import Prefix
 import jc2cli.tools.loggerator as loggerator
 
@@ -83,7 +83,7 @@ class Node(object):
         Returns:
             :any:`list`: list with all parents for the node.
         """
-        raise CliException(MODULE, 'parents() operation not allowed.')
+        raise CliError(MODULE, 'parents() operation not allowed.')
 
     @property
     def argnode(self):
@@ -184,7 +184,7 @@ class Node(object):
             None
         """
         if child.parent and child.parent != self:
-            raise CliException(MODULE, 'add_child() not allowed on child with parent.')
+            raise CliError(MODULE, 'add_child() not allowed on child with parent.')
         else:
             self._add_child(child, isloop)
 
@@ -400,7 +400,7 @@ class Node(object):
                 name = pattern
             trav = trav.find_child_by_name(name, check_default=check_default)
             if trav is None:
-                raise CliException(MODULE, '<{}> not found'.format(pattern))
+                raise CliError(MODULE, '<{}> not found'.format(pattern))
             else:
                 node_path.append(trav)
         return node_path
@@ -467,7 +467,7 @@ class Node(object):
                 child.add_child(end_child)
 
         else:
-            raise CliException(MODULE, 'Unkown type of rule.')
+            raise CliError(MODULE, 'Unkown type of rule.')
 
         self.add_child(child)
         return end_child

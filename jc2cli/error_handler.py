@@ -37,7 +37,7 @@ class CliException(Exception):
     """CliException class is the base class for any exception to be raised by the application.
     """
 
-    def __init__(self, module, message, exc_message=None, *args, **kwargs):
+    def __init__(self, module, message, _type, exc_message=None, *args, **kwargs):
         """CliException class initialization method.
 
         Args:
@@ -45,8 +45,27 @@ class CliException(Exception):
             message (str) : Message with the exception information.
             exc_message (str) : System exception that caused this app exception.
         """
-        logger.error("[{}] {} {}".format(module,
-                                         '<{}>'.format(exc_message) if exc_message else '',
-                                         message))
+        logger.error("[{}] {} {} {}".format(module,
+                                            _type,
+                                            '<{}>'.format(exc_message) if exc_message else '',
+                                            message))
         super(CliException, self).__init__(message, *args, **kwargs)
         self.message = message
+        self.type = _type
+
+
+class CliError(CliException):
+    """CliError class is the base class for any exception to be raised by the application.
+    """
+
+    def __init__(self, module, message, exc_message=None, *args, **kwargs):
+        super(CliError, self).__init__(module, message, 'CliError', exc_message, *args, **kwargs)
+
+
+class CliValidationError(CliException):
+    """CliValidationError class is the base class for any exception to be raised for
+    a type validation error.
+    """
+
+    def __init__(self, module, message, exc_message=None, *args, **kwargs):
+        super(CliError, self).__init__(module, message, 'CliError', exc_message, *args, **kwargs)
