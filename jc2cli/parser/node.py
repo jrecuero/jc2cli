@@ -1,4 +1,4 @@
-__docformat__ = 'restructuredtext en'
+_docformat__ = 'restructuredtext en'
 
 # -----------------------------------------------------------------------------
 #  _                            _
@@ -11,7 +11,7 @@ __docformat__ = 'restructuredtext en'
 #
 from jc2cli.parser.rules import RuleHandler as RH
 from jc2cli.error_handler import CliError
-# from jc2cli.argtypes import Prefix
+from jc2cli.argo_types import Prefix
 import jc2cli.tools.loggerator as loggerator
 
 
@@ -565,8 +565,7 @@ class PrefixNode(Node):
         """
         super(PrefixNode, self).__init__(None, **kwargs)
         self.label = kwargs.get('label', argo.name)
-        # TO BE DONE: Prefix
-        # self.completer = Prefix(label=self.label)
+        self.completer = Prefix(label=self.label)
 
     def find_by_name(self, name, **kwargs):
         """Method that checks if the node has the given name
