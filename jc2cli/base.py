@@ -264,7 +264,7 @@ class Base(object):
         try:
             pre_return = True
             cb_return = True
-            post_return = True
+            post_return = False
             command, params = Base.get_command_from_line(user_input)
             if kwargs.get('pre_cmd', False):
                 pre_return = self.pre_command(command, user_input)
@@ -280,7 +280,7 @@ class Base(object):
             if cb_return is None:
                 print('Unknown command: {}'.format(user_input))
                 cb_return = True
-            return cb_return and post_return
+            return cb_return or post_return
         except CliValidationError as ex:
             error_message = 'Error: command [{0}] user_input: "{1}" exception: {2}'.format(command, user_input, ex.message)
             logger.error(error_message)

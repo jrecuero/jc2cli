@@ -51,6 +51,12 @@ def end(time):
     return True
 
 
+@command('TEST time')
+@argo('time', Int(), 0)
+def do_test(time):
+    return 'TEST: running in main module at {0}'.format(time)
+
+
 @command('TIME line')
 @argo('line', Line(), None)
 def the_time(line):
