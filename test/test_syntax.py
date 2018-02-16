@@ -1,6 +1,6 @@
 import pytest
 from jc2cli.decorators import command, argo
-from jc2cli.argo_types import Str, Int
+from jc2cli.argo_types import Str, Int, Dicta
 from jc2cli.namespace import Handler
 from jc2cli.error_handler import CliError, CliValidationError
 
@@ -246,7 +246,9 @@ def do_command_nine(name, age, zipi):
                           ('COMMAND-NINE six -zipi 960 -zipi 961', 'cNINE six 0 [960, 961]'),
                           ('COMMAND-NINE seven -age 70 -age 71 -zipi 907', 'cNINE seven [70, 71] 907'),
                           ('COMMAND-NINE eight -age 8 -zipi 980 -zipi 981', 'cNINE eight 8 [980, 981]'),
-                          ('COMMAND-NINE nine -age 90 -age 91 -zipi 990 -zipi 991', 'cNINE nine [90, 91] [990, 991]'), ])
+                          ('COMMAND-NINE nine -age 90 -age 91 -zipi 990 -zipi 991', 'cNINE nine [90, 91] [990, 991]'),
+                          ('COMMAND-NINE ten -zipi 910 -age 10', 'cNINE ten 10 910'),
+                          ])
 def test_command_nine_ok(cli_call, commands, results):
     result = cli_call(commands)
     assert result == results
@@ -345,7 +347,8 @@ def do_command_twelve(age, zipi):
                           ('COMMAND-TWELVE -zipi 960 -zipi 961', 'cTWELVE 0 [960, 961]'),
                           ('COMMAND-TWELVE -age 70 -age 71 -zipi 907', 'cTWELVE [70, 71] 907'),
                           ('COMMAND-TWELVE -age 8 -zipi 980 -zipi 981', 'cTWELVE 8 [980, 981]'),
-                          ('COMMAND-TWELVE -age 90 -age 91 -zipi 990 -zipi 991', 'cTWELVE [90, 91] [990, 991]'), ])
+                          ('COMMAND-TWELVE -age 90 -age 91 -zipi 990 -zipi 991', 'cTWELVE [90, 91] [990, 991]'),
+                          ('COMMAND-TWELVE -zipi 910 -age 10', 'cTWELVE 10 910'), ])
 def test_command_twelve_ok(cli_call, commands, results):
     result = cli_call(commands)
     assert result == results
@@ -362,5 +365,140 @@ def test_command_twelve_ok(cli_call, commands, results):
                           'COMMAND-TWELVE -age -age',
                           'COMMAND-TWELVE -zipi -zipi', ])
 def test_command_twelve_fail(cli_call, commands):
+    with pytest.raises((CliError, CliValidationError)):
+        cli_call(commands, reraise=True)
+
+
+#
+# Test command with free form argument
+@command('COMMAND-THIRTEEN name [desc]@')
+@argo('name', Str(), None)
+@argo('desc', Str(), 'none')
+def do_command_thirteen(name, desc):
+    return 'cTHIRTEEN {0} {1}'.format(name, desc)
+
+
+@pytest.mark.parametrize(('commands', 'results'),
+                         [('COMMAND-THIRTEEN one ONE', 'cTHIRTEEN one ONE'),
+                          ('COMMAND-THIRTEEN two TWO 2', "cTHIRTEEN two ['TWO', '2']"),
+                          ('COMMAND-THIRTEEN three THREE x=3', "cTHIRTEEN three ['THREE', 'x=3']"),
+                          ('COMMAND-THIRTEEN four y=4 FOUR', "cTHIRTEEN four ['y=4', 'FOUR']"),
+                          ('COMMAND-THIRTEEN five x=FIVE y=5', "cTHIRTEEN five ['x=FIVE', 'y=5']"), ])
+def test_command_thirteen_ok(cli_call, commands, results):
+    result = cli_call(commands)
+    assert result == results
+
+
+@pytest.mark.parametrize('commands',
+                         ['COMMAND-THIRTEEN zero', ])
+def test_command_thirteen_fail(cli_call, commands):
+    with pytest.raises((CliError, CliValidationError)):
+        cli_call(commands, reraise=True)
+
+
+#
+# Test command with free form argument as dictionary
+@command('COMMAND-FOURTEEN name [desc]@')
+@argo('name', Str(), None)
+@argo('desc', Dicta(), {})
+def do_command_fourteen(name, desc):
+    return 'cFOURTEEN {0} {1}'.format(name, desc)
+
+
+@pytest.mark.parametrize(('commands', 'results'),
+                         [('COMMAND-FOURTEEN one x=ONE', "cFOURTEEN one {'x': 'ONE'}"),
+                          ('COMMAND-FOURTEEN two x=TWO y=2', "cFOURTEEN two {'x': 'TWO', 'y': '2'}"), ])
+def test_command_fourteen_ok(cli_call, commands, results):
+    result = cli_call(commands)
+    assert result == results
+
+
+@pytest.mark.parametrize('commands',
+                         ['COMMAND-FOURTEEN zero',
+                          'COMMAND-FOURTEEN one ONE',
+                          'COMMAND-FOURTEEN two x=TWO 2',
+                          'COMMAND-FOURTEEN three THREE y=3', ])
+def test_command_fourteen_fail(cli_call, commands):
+    with pytest.raises((CliError, CliValidationError)):
+        cli_call(commands, reraise=True)
+
+
+#
+# Test command with mandatory argument and a constant argument
+@command('COMMAND-FIFTEEN name <key>')
+@argo('name', Str(), None)
+@argo('key', Str(), None)
+def do_command_fifteen(name, key):
+    return 'cFIFTEEN {0} {1}'.format(name, key)
+
+
+@pytest.mark.parametrize(('commands', 'results'),
+                         [('COMMAND-FIFTEEN one key', 'cFIFTEEN one key'), ])
+def test_command_fifteen_ok(cli_call, commands, results):
+    result = cli_call(commands)
+    assert result == results
+
+
+@pytest.mark.parametrize('commands',
+                         ['COMMAND-FIFTEEN one',
+                          'COMMAND-FIFTEEN one other', ])
+def test_command_fifteen_fail(cli_call, commands):
+    with pytest.raises((CliError, CliValidationError)):
+        cli_call(commands, reraise=True)
+
+
+#
+# Test command with mandatory argument and a conditional mandatory
+# two constant argument
+@command('COMMAND-SIXTEEN name [<key1> | <key2>]!')
+@argo('name', Str(), None)
+@argo('key1', Str(), 'none')
+@argo('key2', Str(), 'none')
+def do_command_sixteen(name, key1, key2):
+    return 'cSIXTEEN {0} {1} {2}'.format(name, key1, key2)
+
+
+@pytest.mark.parametrize(('commands', 'results'),
+                         [('COMMAND-SIXTEEN one key1', 'cSIXTEEN one key1 none'),
+                          ('COMMAND-SIXTEEN two key2', 'cSIXTEEN two none key2'), ])
+def test_command_sixteen_ok(cli_call, commands, results):
+    result = cli_call(commands)
+    assert result == results
+
+
+@pytest.mark.parametrize('commands',
+                         ['COMMAND-SIXTEEN one',
+                          'COMMAND-SIXTEEN one other',
+                          'COMMAND-SIXTEEN one key1 key2',
+                          'COMMAND-SIXTEEN one key1 other',
+                          'COMMAND-SIXTEEN one other key2', ])
+def test_command_sixteen_fail(cli_call, commands):
+    with pytest.raises((CliError, CliValidationError)):
+        cli_call(commands, reraise=True)
+
+
+#
+# Test command with mandatory argument and a conditional mandatory
+# two arguments
+@command('COMMAND-SEVENTEEN name [age | zipi]!')
+@argo('name', Str(), None)
+@argo('age', Int(), 0)
+@argo('zipi', Int(), 900)
+def do_command_seventenn(name, age, zipi):
+    return 'cSEVENTEEN {0} {1} {2}'.format(name, age, zipi)
+
+
+@pytest.mark.parametrize(('commands', 'results'),
+                         [('COMMAND-SEVENTEEN one -age 1', 'cSEVENTEEN one 1 900'),
+                          ('COMMAND-SEVENTEEN two -zipi 902', 'cSEVENTEEN two 0 902'), ])
+def test_command_seventeen_ok(cli_call, commands, results):
+    result = cli_call(commands)
+    assert result == results
+
+
+@pytest.mark.parametrize('commands',
+                         ['COMMAND-SEVENTEEN one',
+                          'COMMAND-SEVENTEEN two -age 2 -zipi 902', ])
+def test_command_seventeen_fail(cli_call, commands):
     with pytest.raises((CliError, CliValidationError)):
         cli_call(commands, reraise=True)

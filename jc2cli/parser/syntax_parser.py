@@ -23,7 +23,7 @@ import jc2cli.tools.loggerator as loggerator
 # -----------------------------------------------------------------------------
 #
 MODULE = 'PARSER.parser'
-LOGGER = loggerator.getLoggerator(MODULE)
+logger = loggerator.getLoggerator(MODULE)
 
 
 # -----------------------------------------------------------------------------
@@ -111,7 +111,7 @@ def process_tokens(tokens, withend=True, parent_type=None):
                 op = '1'
             rules.append({'counter': counter, 'type': op, 'args': process_tokens(tok, False, op)})
         else:
-            LOGGER.error('Invalid Syntax', out=True)
+            logger.error('Invalid Syntax', out=True)
         counter += 1
     if withend:
         rules.append({'counter': counter, 'type': '0', 'args': None})
@@ -210,14 +210,14 @@ if __name__ == '__main__':
     # toks = (syntax + pp.stringEnd).parseString("tenant tname [tid | tdesc talias | tsignature | tuser [tuname | tuid]? ]?")
     # toks = (syntax + pp.stringEnd).parseString("tenant tname [tid | tuid [tlastname | tpassport]? ]? [thelp | tdesc]* [tsignature]+")
     # toks = get_syntax().parseString("tenant t1 [<t2> | t3]!")
-    # toks = get_syntax().parseString("tenant t1 <t2>")
+    toks = get_syntax().parseString("tenant t1 <t2>")
     # toks = get_syntax().parseString("tenant [t1 t2 t3]+")
     # toks = get_syntax().parseString("tenant t1 [t2]@")
     # toks = get_syntax().parseString("tenant t1 [t2 | t3]*")
-    toks = get_syntax().parseString("tenant t1 [t2]? [t3]?")
+    # toks = get_syntax().parseString("tenant t1 [t2]? [t3]?")
 
-    LOGGER.display(toks, log=False)
+    logger.display(toks, log=False)
     cmd, rules = _process_syntax(toks)
-    LOGGER.display(cmd, log=False)
+    logger.display(cmd, log=False)
     for rule in rules:
-        LOGGER.display(rule, log=False)
+        logger.display(rule, log=False)
