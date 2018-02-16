@@ -9,6 +9,7 @@ __docformat__ = 'restructuredtext en'
 #             |_|
 # -----------------------------------------------------------------------------
 #
+from jc2cli.error_handler import CliValidationError
 import jc2cli.tools.loggerator as loggerator
 
 
@@ -161,7 +162,8 @@ class CliType(object):
         Returns:
             str : String with the typed value.
         """
-        self.validate(value)
+        if not self.validate(value):
+            raise CliValidationError(MODULE, 'Validation Error: {}'.format(value))
         return self._get_value(value)
 
     # @staticmethod
@@ -267,7 +269,11 @@ class Int(CliType):
         """validate method returns if value entered by the user is valid for
         argument type.
         """
-        return isinstance(value, int)
+        try:
+            int(value)
+            return True
+        except ValueError:
+            return False
 
     def _get_value(self, value):
         """_get_value method types any value as CliType.

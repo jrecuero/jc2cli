@@ -14,7 +14,7 @@ from jc2cli.arguments import Arguments
 from jc2cli.error_handler import CliError
 import jc2cli.parser.syntax_parser as syntax_parser
 import jc2cli.tools.loggerator as loggerator
-from jc2cli.parser.node import Start
+from jc2cli.parser.node import Start, PrefixNode
 from jc2cli.parser.rules import RuleHandler as RH
 
 
@@ -117,10 +117,19 @@ class Command(object):
     def map_passed_args_to_command_arguments(self, cli_args):
         node_path = self.syntax_root.find_path(cli_args)
         matched_nodes = list()
+        is_prefix = False
         for node, value in zip(node_path, cli_args):
+            is_node_prefix = isinstance(node, PrefixNode)
+            if is_prefix and is_node_prefix:
+                raise CliError(MODULE, 'Value not provided for optional argument')
+            elif not is_node_prefix:
+                is_prefix = False
+            is_prefix = isinstance(node, PrefixNode)
             arg_value = node.map_arg_to_value(value)
             node.store_value_in_argo(arg_value, node in matched_nodes)
             matched_nodes.append(node)
+        if is_prefix:
+            raise CliError(MODULE, 'Value not provided for optional argument')
         use_args = self.arguments.get_indexed_values()
         return use_args
 

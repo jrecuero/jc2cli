@@ -68,4 +68,4 @@ class CliValidationError(CliException):
     """
 
     def __init__(self, module, message, exc_message=None, *args, **kwargs):
-        super(CliError, self).__init__(module, message, 'CliError', exc_message, *args, **kwargs)
+        super(CliValidationError, self).__init__(module, message, 'CliError', exc_message, *args, **kwargs)

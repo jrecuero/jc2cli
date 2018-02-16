@@ -12,7 +12,7 @@ __docformat__ = 'restructuredtext en'
 import json
 import jc2cli.tools.loggerator as loggerator
 from jc2cli.completer import CliCompleter
-from jc2cli.error_handler import CliValidationError
+from jc2cli.error_handler import CliError, CliValidationError
 from prompt_toolkit import prompt
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -278,14 +278,16 @@ class Base(object):
             if kwargs.get('post_cmd', False):
                 post_return = self.post_command(command, user_input, cb_return)
             if cb_return is None:
-                print('Unknown command: {}'.format(user_input))
-                cb_return = True
+                raise CliError(MODULE, 'Unknown command: {}'.format(user_input))
             return cb_return or post_return
-        except CliValidationError as ex:
+        except (CliError, CliValidationError) as ex:
             error_message = 'Error: command [{0}] user_input: "{1}" exception: {2}'.format(command, user_input, ex.message)
             logger.error(error_message)
             logger.display(error_message)
-            return True
+            if kwargs.get('reraise', False):
+                raise
+            else:
+                return True
 
     def run_prompt(self, **kwargs):
         """Execute the command line.
