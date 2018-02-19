@@ -3,6 +3,11 @@ from jc2cli.mode import Mode
 
 
 class Node(object):
+    """Node class implements all functionality for storing command information
+    in the command tree.
+
+    The command tree is composed by modes, which contain commands or modes.
+    """
 
     def __init__(self, name, cb=None, mode=False):
         self.name = name

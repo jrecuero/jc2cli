@@ -35,21 +35,35 @@ logger = loggerator.getLoggerator(MODULE)
 # -----------------------------------------------------------------------------
 #
 def handler(ns_handler, command_name, *args, **kwargs):
+    """handler is the default handler for commands defined as regular
+    function.
+    """
     root = ns_handler.context.root
     return root.run(command_name, ns_handler, *args, **kwargs)
 
 
 def handler_instance(ns_handler, command_name, instance, *args, **kwargs):
+    """handler_instance is the default handler for commands defined as
+    methods in a class.
+
+    The handler will pass the given instance to the command.
+    """
     root = ns_handler.contex.root
     return root.run_instance(command_name, ns_handler, instance, *args, **kwargs)
 
 
 def handler_none(ns_handler, command_name, *args, **kwargs):
+    """handler_none is the default hadnler for commands defined as method in
+    a class that not require to recive an instance.
+    """
     root = ns_handler.context.root
     return root.run_instance(command_name, ns_handler, None, *args, **kwargs)
 
 
 def handler_mode(child_ns_handler, ns_handler, command_name, *args, **kwargs):
+    """handler_mode is the default handler that allows to get inside inner
+    modes.
+    """
     root = ns_handler.context.root
     result = root.run(command_name, ns_handler, *args, **kwargs)
     if result and root.get_node(command_name).is_mode():

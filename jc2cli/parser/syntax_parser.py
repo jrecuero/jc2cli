@@ -64,7 +64,7 @@ def process_tokens(tokens, withend=True, parent_type=None):
 
     Rule types are:
 
-        - '1' : Required parameter. Default value shoudl be always None.
+        - '1' : Required parameter. Default value should be always None.
 
         - '2' : Constant parameter. It can be required or optional. From '<x>'
           syntax.

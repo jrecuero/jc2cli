@@ -56,57 +56,94 @@ class Tree(object):
             return self.__db
 
         def add_node(self, key, node):
+            """add_node adds a node to the node database.
+            """
             logger.trace('node {0} to tree {1}'.format(key, self.name))
             if key not in self.__db:
                 self.__db[key] = node
             return self.__db[key]
 
         def rename_node(self, old_key, new_key):
+            """rename_node renames a node from the node database.
+            """
             self.__db[new_key] = self.__db.pop(old_key)
             self.__db[new_key].name = new_key
 
         def get_node(self, key):
+            """get_node retrieves a node from the node database.
+            """
             return self.__db.get(key, None)
 
     def __new__(cls):
+        """__new___ creates a singleton for the Tree class."""
         if cls.__ROOT is None:
             cls.__ROOT = Tree._Tree()
         return cls.__ROOT
 
     @classmethod
     def root(cls):
+        """root creates or retrieves the Tree singleton.
+        """
         return cls.__new__(cls)
 
     @classmethod
     def command_tree_namespace(cls, namespace):
+        """command_tree_namespace retrieves all commands for the given
+        namespace.
+        """
         return cls.__COMMAND_TREE[namespace]
 
     @classmethod
-    def command_tree(cls):
-        return cls.command_tree_namespace(cls.__ACTIVE_CMD_NS)
-
-    @classmethod
-    def set_command_tree(cls, namespace, command_tree):
-        cls.__ACTIVE_CMD_NS = namespace
-        cls.__COMMAND_TREE[cls.__ACTIVE_CMD_NS] = command_tree
-        return cls.__COMMAND_TREE[cls.__ACTIVE_CMD_NS]
-
-    @classmethod
-    def extend_command_tree(cls, namespace, command_tree):
-        if namespace in cls.__COMMAND_TREE.keys():
-            logger.trace('namespace {0} with {1}'.format(namespace, command_tree.keys()))
-            cls.__COMMAND_TREE[namespace].update(command_tree)
-            return cls.__COMMAND_TREE[namespace]
-        return None
-
-    @classmethod
     def active_namespace(cls):
+        """active_namespace returns the active namespace.
+        """
         return cls.__ACTIVE_CMD_NS
 
     @classmethod
+    def set_active_namespace(cls, namespace):
+        """set_active_namespace sets the active namespace to the given
+        namespace.
+        """
+        cls.__ACTIVE_CMD_NS = namespace
+
+    @classmethod
+    def command_tree(cls):
+        """command_tree retrieves all commands for the active namespace.
+        """
+        return cls.command_tree_namespace(cls.active_namespace())
+
+    @classmethod
+    def set_command_tree(cls, namespace, command_tree):
+        """set_command_tree assigns all given commands to the given namespace
+        and set the namespace as the active one.
+        """
+        cls.set_active_namespace(namespace)
+        cls.__COMMAND_TREE[cls.active_namespace()] = command_tree
+        return cls.command_tree()
+
+    @classmethod
+    def get_all_namespaces(cls):
+        """get_command_tree_names retrieves all configures namespaces names.
+        """
+        return cls.__COMMAND_TREE.keys()
+
+    @classmethod
+    def extend_command_tree(cls, namespace, command_tree):
+        """extend_command_tree extends the given namespace adding all given
+        commands.
+        """
+        if namespace in cls.get_all_namespaces():
+            logger.trace('namespace {0} with {1}'.format(namespace, command_tree.keys()))
+            cls.__COMMAND_TREE[namespace].update(command_tree)
+            return cls.command_tree_namespace(namespace)
+        return None
+
+    @classmethod
     def switch_to(cls, namespace):
-        if namespace in cls.__COMMAND_TREE.keys():
-            cls.__ACTIVE_CMD_NS = namespace
+        """switch_to switches to the given namespace as the active one.
+        """
+        if namespace in cls.get_all_namespaces():
+            cls.set_active_namespace(namespace)
             return True
         else:
             return False
@@ -130,6 +167,12 @@ class Tree(object):
 
     @classmethod
     def node(cls, name, cb, mode=False):
+        """node adds/retrieves a node to/from the node tree.
+
+        The node is identified by the node name, if the node is already
+        present in the node tree, it retrieves the node instead of adding
+        it.
+        """
         root = Tree.root()
         node = root.get_node(name)
         if not node:
@@ -178,14 +221,14 @@ class Tree(object):
 
     @classmethod
     def get_node(cls, command_name):
+        """get_node retrieved a node from the node tree.
+        """
         return cls.command_tree().get(command_name, None)
 
     @classmethod
     def run(cls, command_name, ns_handler, *args, **kwargs):
-        #  node = cls.get_node(command_name)
-        #  if node and node.command:
-        #      return node.command.cb(*args, **kwargs)
-        # return None
+        """run executes the callback from a command node.
+        """
         node = cls.get_node(command_name)
         if node and node.command:
             command = node.command

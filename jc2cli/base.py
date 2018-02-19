@@ -177,7 +177,16 @@ class Base(object):
             logger.display('{0}: {1}'.format(i, record))
 
     def save_recording(self, filename, from_record=None, to_record=None):
-        """
+        """save_recording save all recorded commands in the given range
+        into the given filename.
+
+        Args:
+            from_record (int) : First record to save. Set to 0 if None.
+
+            to_record (int): Last record to save. Set to last if None
+
+        Returns:
+            None
         """
         records = self.select_recording(from_record, to_record)
         to_save = []
@@ -188,16 +197,7 @@ class Base(object):
                 json.dump(to_save, f)
 
     def record_command(self, user_input):
-        """Saves in a JSON file the range of records recorded from the given
-        range.
-
-        Args:
-            from_record (int) : First record to save. Set to 0 if None.
-
-            to_record (int): Last record to save. Set to last if None
-
-        Returns:
-            None
+        """record_commad records the given user input command.
         """
         if self.__recording:
             self.__record_data.append(user_input)

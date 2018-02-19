@@ -68,4 +68,22 @@ class CliValidationError(CliException):
     """
 
     def __init__(self, module, message, exc_message=None, *args, **kwargs):
-        super(CliValidationError, self).__init__(module, message, 'CliError', exc_message, *args, **kwargs)
+        super(CliValidationError, self).__init__(module, message, 'CliValidationError', exc_message, *args, **kwargs)
+
+
+class CliParserError(CliException):
+    """CliParserError class is the base class for any exception to be raised by the syntax
+    parser.
+    """
+
+    def __init__(self, module, message, exc_message=None, *args, **kwargs):
+        super(CliParserError, self).__init__(module, message, 'CliParserError', exc_message, *args, **kwargs)
+
+
+class CliCommandError(CliException):
+    """CliCommandError class is the base class for any exception to be raised by the
+    command execution.
+    """
+
+    def __init__(self, module, message, exc_message=None, *args, **kwargs):
+        super(CliCommandError, self).__init__(module, message, 'CliCommandError', exc_message, *args, **kwargs)

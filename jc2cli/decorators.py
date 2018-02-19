@@ -38,6 +38,9 @@ logger = loggerator.getLoggerator(MODULE)
 # -----------------------------------------------------------------------------
 #
 def _command(f, wrapper, syntax, namespace, internal=False):
+    """_command implements common functionality for @command and @icommand
+    decorators.
+    """
     logger.display('command : syntax : {0}'.format(syntax))
     node = Tree.fnode(f, wrapper)
     node.command.syntax = syntax
@@ -48,6 +51,9 @@ def _command(f, wrapper, syntax, namespace, internal=False):
 
 
 def _mode(f, wrapper, syntax, ns_mode, namespace, internal=False):
+    """_mode implements common functionality for @mode and @imode
+    decorators.
+    """
     logger.display('mode : syntax : {0} : namespace {1}'.format(syntax, ns_mode))
     node = Tree.fnode(f, wrapper, mode=True)
     node.command.syntax = syntax
@@ -59,6 +65,8 @@ def _mode(f, wrapper, syntax, ns_mode, namespace, internal=False):
 
 
 def command(syntax, namespace=None):
+    """command decorator creates a new command.
+    """
 
     def command_wrapper(f):
 
@@ -72,6 +80,10 @@ def command(syntax, namespace=None):
 
 
 def icommand(syntax, namespace=None):
+    """icommand decorator creates a new internal command.
+
+    Internal command receives one extra parameter, namespace handler.
+    """
 
     def command_wrapper(f):
 
@@ -85,6 +97,8 @@ def icommand(syntax, namespace=None):
 
 
 def mode(syntax, ns_mode, namespace=None):
+    """mode decorator creates a new mode.
+    """
 
     def mode_wrapper(f):
 
@@ -98,6 +112,10 @@ def mode(syntax, ns_mode, namespace=None):
 
 
 def imode(syntax, ns_mode, namespace=None):
+    """imode decorator creates a new internal mode.
+
+    Internal mode receives one extra parameter, namespace handler.
+    """
 
     def mode_wrapper(f):
 
@@ -111,6 +129,8 @@ def imode(syntax, ns_mode, namespace=None):
 
 
 def argo(argo_name, argo_type, argo_default=None):
+    """argo decorator adds a new argument to a command or mode.
+    """
 
     def argo_wrapper(f):
 
@@ -127,6 +147,8 @@ def argo(argo_name, argo_type, argo_default=None):
 
 
 def help(help_str):
+    """help decorator adds help description to a command or mode.
+    """
 
     def help_wrapper(f):
 

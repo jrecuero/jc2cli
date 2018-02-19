@@ -97,7 +97,7 @@ def do_exit():
 @help('Display syntax for all commands.')
 def do_syntax():
     for node_instance in Tree.command_tree().values():
-        print(node_instance.command.syntax)
+        logger.display(node_instance.command.syntax)
     return True
 
 
@@ -105,7 +105,7 @@ def do_syntax():
 @help('Display this help information.')
 def do_help():
     for command_name, node_instance in Tree.command_tree().items():
-        print('{0} : {1}'.format(command_name, node_instance.command.help))
+        logger.display('{0} : {1}'.format(command_name, node_instance.command.help))
     return True
 
 

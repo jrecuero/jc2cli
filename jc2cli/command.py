@@ -66,20 +66,26 @@ class Command(object):
         self.name = self.syntax.split()[0]
 
     def add_argument(self, argument):
+        """add_argument adds a new argument to the command.
+        """
         self.arguments.insert_argument(argument)
 
     def len_arguments(self):
+        """len_arguments returns the command number of arguments.
+        """
         return self.arguments.len()
 
     def is_lined(self):
+        """is_lined checks if the commands has any Line argument.
+        """
         for x in self.arguments.traverse():
             if x.is_lined():
                 return True
         return False
 
     def build_command_parsing_tree(self):
-        """Build the command parsing tree using the command arguments and the
-        command syntax.
+        """build_commands_parsing_tree buildsthe command parsing tree using
+        the command arguments and the command syntax.
 
         Returns:
             boolean: True if syntax tree is created, None else.
@@ -96,9 +102,9 @@ class Command(object):
         return None
 
     def get_cli_args(self, line):
-        """Retrieve the command arguments stored in the command function and
-        provided by @argo and @argos decorators; and the arguments passed by
-        the user in the command line.
+        """get_cli_args retrieves the command arguments stored in the command
+        function and provided by @argo and @argos decorators; and the arguments
+        passed by the user in the command line.
 
         Returns:
             :any:`list`: cli arguments.
@@ -115,6 +121,19 @@ class Command(object):
         return None
 
     def map_passed_args_to_command_arguments(self, cli_args):
+        """map_passes_args_to_commands_arguments uses the command arguments
+        and argument values passed by the user in the CLI, map those using
+        the command parsing tree in order to generate all arguments to be
+        passed to the command function.
+
+        Args:
+            root (node): node where mapping should starts.
+            cmd_argos (list): list with command arguments.
+            cli_args (list): list with CLI arguments.
+
+        Returns:
+            :any:`list` : List with arguments being used.
+        """
         node_path = self.syntax_root.find_path(cli_args)
         matched_nodes = list()
         is_prefix = False
@@ -134,7 +153,8 @@ class Command(object):
         return use_args
 
     def build_command_arguments_from_syntax(self, line):
-        """Method that build arguments to be passed to the command function.
+        """build_command_arguments_syntax builds arguments to be passed to the
+        command function.
 
         Returns:
             list: list with argument to be passed to the command function.

@@ -93,7 +93,7 @@ class RuleHandler(object):
 
     @staticmethod
     def is_cte_param_rule(rule):
-        """Static method that checks if the rule contains a constant argument.
+        """Static method that checks if the rule contains an optional argument.
 
         Args:
             rule (dict): dictionary with the given rule to check.

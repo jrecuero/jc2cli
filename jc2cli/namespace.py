@@ -41,6 +41,14 @@ logger = loggerator.getLoggerator(MODULE)
 # -----------------------------------------------------------------------------
 #
 class NameSpace(object):
+    """NameSpace class provides a container for storing a set of commands
+    available at one point to the user.
+
+    One NameSpace represents one mode. It contains a command namespace and
+    a CLI instance for handling all those commands.
+
+    It decouples the command tree from the actual CLI implementation.
+    """
 
     def __init__(self, namespace, context, **kwargs):
         self.namespace = namespace
@@ -83,6 +91,8 @@ class NameSpace(object):
 
 
 class Handler(object):
+    """Handler class implements a common handler for all namespaces.
+    """
 
     def __init__(self):
         self.ns_handlers = {}
