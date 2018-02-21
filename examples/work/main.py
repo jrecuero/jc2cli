@@ -71,12 +71,39 @@ def tenant(tname):
     return True
 
 
+@command('INTERFACE [eth | l3out]?')
+@argo('eth', Str(), 'none')
+@argo('l3out', Str(), 'none')
+def do_interface(eth, l3out):
+    logger.display('INTERFACE: running in main module with eth: "{0}" and l3out: "{1}"'.format(eth, l3out))
+    return True
+
+
 @command('ADD-TENANT tname')
 @argo('tname', Str(), None)
 def do_add_tenant(tname):
     database.append(tname)
     logger.display('ADD-TENANT: add tenant : "{0}"'.format(tname))
     return True
+
+
+@command('LEAF name [<eth> | <l3out>]!')
+@argo('name', Str(), None)
+@argo('eth', Str(), 'none')
+@argo('l3out', Str(), 'none')
+def do_leaf(name, eth, l3out):
+    logger.display('LEAF: running in main module with eth: "{0}" and l3out: "{1}" for name: "{2}"'.format(eth, l3out, name))
+    return True
+
+
+# @command('LEAF [<eth> name1 | <l3out> name2]!')
+# @argo('eth', Str(), 'none')
+# @argo('name1', Str(), 'none')
+# @argo('l3out', Str(), 'none')
+# @argo('name2', Str(), 'none')
+# def do_leaf(eth, name1, l3out, name2):
+#     logger.display('LEAF: running in main module with eth: "{} {}" and l3out: "{} {}"'.format(eth, name1, l3out, name2))
+#     return True
 
 
 @command('exit')

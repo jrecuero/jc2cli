@@ -351,3 +351,16 @@ class Line(CliType):
         entered by the user.
         """
         return True
+
+
+# -----------------------------------------------------------------------------
+#
+class End(Str):
+
+    def _help_str(self):
+        """_help_str method returns default string to be displayed as help.
+
+        Returns:
+            str : string with default help.
+        """
+        return 'Type <CR>'

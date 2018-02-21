@@ -87,6 +87,16 @@ def do_import(ns_handler, filename):
     return True
 
 
+@icommand('debug cmd')
+@help('Internal command for CLI application debug')
+@argo('cmd', Str(), None)
+def do_debug_cmd(ns_handler, cmd):
+    node = Tree.get_node(cmd)
+    if node:
+        print(node.command.syntax_root)
+    return True
+
+
 @command('exit')
 @help('Exit')
 def do_exit():
@@ -163,6 +173,12 @@ class Defaults(object):
         @argo('filename', Str(), None)
         def do_import(self, ns_handler, filename):
             return do_import(ns_handler, filename)
+
+        @icommand('debug cmd')
+        @help('Internal command for CLI application debug')
+        @argo('cmd', Str(), None)
+        def do_debug_cmd(self, ns_handler, cmd):
+            return do_debug_cmd(ns_handler, cmd)
 
 
 def defaults_namespace():

@@ -11,7 +11,9 @@ _docformat__ = 'restructuredtext en'
 #
 from jc2cli.parser.rules import RuleHandler as RH
 from jc2cli.error_handler import CliError
+from jc2cli.arguments import Argument
 from jc2cli.argo_types import Prefix
+from jc2cli.argo_types import End as ArgoEnd
 import jc2cli.tools.loggerator as loggerator
 
 
@@ -87,6 +89,8 @@ class Node(object):
 
     @property
     def argnode(self):
+        """argnode returns the list of nodes for the given node.
+        """
         return [self, ]
 
     def get_children_nodes(self, **kwargs):
@@ -492,8 +496,13 @@ class Node(object):
         Returns:
             str: string with node information.
         """
-        indent = "--" * level
-        return "{}Node.{}\n".format(indent, self.label)
+        # spaces = "   " * (level - 1) if level else ""
+        # indent = spaces + "|--"
+        indent = ".--" * level
+        return "{}Node.{} [{}:{}]\n".format(indent,
+                                            self.label,
+                                            self.completer.__class__.__name__,
+                                            self.completer.label)
 
     def to_str(self, level):
         """Method that returns a string with Node information.
@@ -754,6 +763,8 @@ class Hook(Node):
 
     @property
     def argnode(self):
+        """argnode returns the list of nodes for the given node.
+        """
         return self.get_children_nodes()
 
     def add_child(self, child, isloop=False):
@@ -847,7 +858,7 @@ class Hook(Node):
         Returns:
             str: string with node information.
         """
-        indent = "--" * level
+        indent = ".--" * level
         return "{}Hook.{}\n".format(indent, self.label)
 
 
@@ -886,7 +897,7 @@ class Loop(Hook):
         Returns:
             str: string with node information.
         """
-        indent = "--" * level
+        indent = ".--" * level
         return "{}Loop.{}\n".format(indent, self.label)
 
     def get_children_nodes(self, **kwargs):
@@ -946,7 +957,7 @@ class Start(Hook):
         Returns:
             str: string with node information.
         """
-        indent = "--" * level
+        indent = ".--" * level
         return "{}Start.{}\n".format(indent, self.label)
 
 
@@ -969,6 +980,19 @@ class End(Hook):
         """
         super(End, self).__init__(**kwargs)
         self.label = kwargs.get('label', "End")
+        # This is required in order to be able to display help to end the
+        # command input.
+        self.argo = Argument('end', ArgoEnd())
+        self.completer = self.argo.completer
+
+    @property
+    def argnode(self):
+        """argnode returns the list of nodes for the given node.
+
+        End overload this method in order to be able to return itself, so it
+        can display  help to end command input.
+        """
+        return [self, ]
 
     def build_hook_from_rule(self, rule, argos, end_hook):
         """Method that build a sequence of nodes for the given rule.
@@ -992,5 +1016,5 @@ class End(Hook):
         Returns:
             str: string with node information.
         """
-        indent = "--" * level
+        indent = ".--" * level
         return "{}End.{}\n".format(indent, self.label)
