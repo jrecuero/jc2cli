@@ -143,43 +143,40 @@ def get_syntax():
 
     lbracket = pp.Suppress("[")
     rbracket = pp.Suppress("]")
-    zeroorone_flag = "?"
-    zeroormore_flag = "*"
-    oneormore_flag = "+"
-    only1opt_flag = "!"
+    zero_or_one_flag = "?"
+    zero_or_more_flag = "*"
+    one_or_more_flag = "+"
+    only_1_opt_flag = "!"
     freeform_flag = "@"
-    zooarg = pp.Word(pp.alphanums + "-").setName('zero-or-one-arg')
-    zomarg = pp.Word(pp.alphanums + "-").setName('zero-or-more-arg')
-    oomarg = pp.Word(pp.alphanums + "-").setName('one-or-more-arg')
-    oooarg = pp.Word(pp.alphanums + "-<>").setName('only-one-arg')
-    frearg = pp.Word(pp.alphanums + "-").setName('free-form-arg')
+    argo = pp.Word(pp.alphanums + "-").setName('argument')
+    cto = pp.Word(pp.alphanums + "-<>").setName('constant')
 
-    zeroorone = pp.Forward()
-    zeroorone.setName('zero-or-one')
-    zeroorone_block = pp.ZeroOrMore(("|" + pp.OneOrMore(zooarg | zeroorone)) | pp.OneOrMore(zeroorone))
-    zeroorone << pp.Group(lbracket + pp.ZeroOrMore(zooarg) + zeroorone_block + rbracket + zeroorone_flag)
+    zero_or_one = pp.Forward()
+    zero_or_one.setName('zero-or-one')
+    zero_or_one_block = pp.ZeroOrMore(("|" + pp.OneOrMore(argo | zero_or_one)) | pp.OneOrMore(zero_or_one))
+    zero_or_one << pp.Group(lbracket + pp.ZeroOrMore(argo) + zero_or_one_block + rbracket + zero_or_one_flag)
 
-    zeroormore = pp.Forward()
-    zeroormore_block = pp.ZeroOrMore(("|" + pp.OneOrMore(zomarg | zeroormore)) | pp.OneOrMore(zeroormore))
-    zeroormore << pp.Group(lbracket + pp.ZeroOrMore(zomarg) + zeroormore_block + rbracket + zeroormore_flag)
-    zeroormore.setResultsName('zero-or-more')
+    zero_or_more = pp.Forward()
+    zero_or_more_block = pp.ZeroOrMore(("|" + pp.OneOrMore(argo | zero_or_more)) | pp.OneOrMore(zero_or_more))
+    zero_or_more << pp.Group(lbracket + pp.ZeroOrMore(argo) + zero_or_more_block + rbracket + zero_or_more_flag)
+    zero_or_more.setResultsName('zero-or-more')
 
-    oneormore = pp.Forward()
-    oneormore_block = pp.ZeroOrMore(("|" + pp.OneOrMore(oomarg | oneormore)) | pp.OneOrMore(oneormore))
-    oneormore << pp.Group(lbracket + pp.ZeroOrMore(oomarg) + oneormore_block + rbracket + oneormore_flag)
-    oneormore.setName('one-or-more')
+    one_or_more = pp.Forward()
+    one_or_more_block = pp.ZeroOrMore(("|" + pp.OneOrMore(argo | one_or_more)) | pp.OneOrMore(one_or_more))
+    one_or_more << pp.Group(lbracket + pp.ZeroOrMore(argo) + one_or_more_block + rbracket + one_or_more_flag)
+    one_or_more.setName('one-or-more')
 
-    only1opt = pp.Forward()
-    only1opt_block = pp.ZeroOrMore(("|" + pp.OneOrMore(oooarg | only1opt)) | pp.OneOrMore(only1opt))
-    only1opt << pp.Group(lbracket + pp.ZeroOrMore(oooarg) + only1opt_block + rbracket + only1opt_flag)
-    only1opt.setName('one-or-more')
+    only_1_opt = pp.Forward()
+    only_1_opt_block = pp.ZeroOrMore(("|" + pp.OneOrMore(cto | only_1_opt)) | pp.OneOrMore(only_1_opt))
+    only_1_opt << pp.Group(lbracket + pp.ZeroOrMore(cto) + only_1_opt_block + rbracket + only_1_opt_flag)
+    only_1_opt.setName('one-1-option')
 
     freeform = pp.Forward()
-    freeform_block = pp.ZeroOrMore(("|" + pp.OneOrMore(frearg | freeform)) | pp.OneOrMore(freeform))
-    freeform << pp.Group(lbracket + pp.ZeroOrMore(frearg) + freeform_block + rbracket + freeform_flag)
-    freeform.setName('zero-or-one')
+    freeform_block = pp.ZeroOrMore(("|" + pp.OneOrMore(argo | freeform)) | pp.OneOrMore(freeform))
+    freeform << pp.Group(lbracket + pp.ZeroOrMore(argo) + freeform_block + rbracket + freeform_flag)
+    freeform.setName('free-form')
 
-    options = pp.ZeroOrMore(pp.Group(zeroorone | zeroormore | oneormore | only1opt | freeform))
+    options = pp.ZeroOrMore(posarg | pp.Group(zero_or_one | zero_or_more | one_or_more | only_1_opt | freeform))
     syntax = command + pp.ZeroOrMore(posarg) + options
     return (syntax + pp.stringEnd)
 
@@ -210,11 +207,14 @@ if __name__ == '__main__':
     # toks = (syntax + pp.stringEnd).parseString("tenant tname [tid | tdesc talias | tsignature | tuser [tuname | tuid]? ]?")
     # toks = (syntax + pp.stringEnd).parseString("tenant tname [tid | tuid [tlastname | tpassport]? ]? [thelp | tdesc]* [tsignature]+")
     # toks = get_syntax().parseString("tenant t1 [<t2> | t3]!")
-    toks = get_syntax().parseString("tenant t1 <t2>")
+    # toks = get_syntax().parseString("tenant t1 <t2>")
     # toks = get_syntax().parseString("tenant [t1 t2 t3]+")
     # toks = get_syntax().parseString("tenant t1 [t2]@")
     # toks = get_syntax().parseString("tenant t1 [t2 | t3]*")
     # toks = get_syntax().parseString("tenant t1 [t2]? [t3]?")
+    # toks = get_syntax().parseString("tenant t1 <t2>")
+    toks = get_syntax().parseString("tenant t1 [t2 t3]? t4 [t5 | t6]?")
+    # toks = get_syntax().parseString("tenant t1 [<t2> | <t3>]! t4")
 
     logger.display(toks, log=False)
     cmd, rules = _process_syntax(toks)

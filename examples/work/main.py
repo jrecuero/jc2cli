@@ -87,23 +87,25 @@ def do_add_tenant(tname):
     return True
 
 
-@command('LEAF name [<eth> | <l3out>]!')
-@argo('name', Str(), None)
+@command('SPINE [<eth> | <l3out> ]! name')
 @argo('eth', Str(), 'none')
 @argo('l3out', Str(), 'none')
-def do_leaf(name, eth, l3out):
-    logger.display('LEAF: running in main module with eth: "{0}" and l3out: "{1}" for name: "{2}"'.format(eth, l3out, name))
+@argo('name', Str(), None)
+def do_spine(eth, l3out, name):
+    logger.display('SPINE: running in main module with eth: "{}" and l3out: "{}" with {}'.format(eth, l3out, name))
     return True
 
 
-# @command('LEAF [<eth> name1 | <l3out> name2]!')
-# @argo('eth', Str(), 'none')
-# @argo('name1', Str(), 'none')
-# @argo('l3out', Str(), 'none')
-# @argo('name2', Str(), 'none')
-# def do_leaf(eth, name1, l3out, name2):
-#     logger.display('LEAF: running in main module with eth: "{} {}" and l3out: "{} {}"'.format(eth, name1, l3out, name2))
-#     return True
+@command('LEAF [<eth> | l3out]! leafname [primary | secondary]? device')
+@argo('eth', Str(), 'none')
+@argo('l3out', Str(), 'none')
+@argo('leafname', Str(), None)
+@argo('primary', Str(), 'none')
+@argo('secondary', Str(), 'none')
+@argo('device', Str(), None)
+def do_leaf(eth, l3out, leafname, primary, secondary, device):
+    logger.display('LEAF: {} | {} {} {} | {} {}'.format(eth, l3out, leafname, primary, secondary, device))
+    return True
 
 
 @command('exit')
