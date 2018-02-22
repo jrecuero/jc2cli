@@ -1,6 +1,5 @@
 from jc2cli.decorators import command, mode, argo
-from jc2cli.argo_types import Str, Int, Line, CliType, Constant, Enum
-from jc2cli.error_handler import CliValidationError
+from jc2cli.argo_types import Str, Int, Line, CliType, Constant, Enum, Range
 import jc2cli.tools.loggerator as loggerator
 
 MODULE = 'EXAMPLES.WORK.main'
@@ -21,8 +20,7 @@ class T_Tenant(CliType):
         self.complete_list = self._tenants_cb()
 
     def validate(self, value):
-        if value not in self._tenants_cb():
-            raise CliValidationError('MAIN', 'Validation Error: {}'.format(value))
+        return value in self._tenants_cb(), 'Value is not a possible value'
 
 
 @command('START app default')
@@ -108,6 +106,13 @@ def do_leaf(eth, l3out, leafname, primary, secondary, device):
 @argo('ptype', Enum(['app', 'l3', 'l2']), 'app')
 def do_profile(ptype):
     logger.display('PROFILE type: {}'.format(ptype))
+    return True
+
+
+@command('SPEED value')
+@argo('value', Range([[1, 100], (105, 110), (150, 160, 170)]), '1')
+def do_speed(value):
+    logger.display('SPEED: {}'.format(value))
     return True
 
 

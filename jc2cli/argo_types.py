@@ -136,7 +136,7 @@ class CliType(object):
         Validation should be called before value is stored in Argument
         instance.
         """
-        return True
+        return True, ''
 
     def get_the_value(self, value):
         """get_the_value method types any value as CliType.
@@ -158,8 +158,11 @@ class CliType(object):
         Returns:
             str : String with the typed value.
         """
-        if not self.validate(value):
-            raise CliValidationError(MODULE, 'Validation Error: {}'.format(value))
+        result, message = self.validate(value)
+        if not result:
+            raise_message = '\nValidation Error: argument: "{}" = {}'.format(self.argo.name, value)
+            raise_message += ': {}'.format(message)
+            raise CliValidationError(MODULE, raise_message)
         return self.get_the_value(value)
 
     def type(self):
@@ -243,9 +246,9 @@ class Int(CliType):
         """
         try:
             int(value)
-            return True
+            return True, ''
         except ValueError:
-            return False
+            return False, 'Value is not an integer'
 
     def get_the_value(self, value):
         """get_the_value method types any value as CliType.
@@ -318,6 +321,15 @@ class Constant(Str):
         else:
             return [self.argo.name, ]
 
+    def validate(self, value):
+        """validate method returns if value entered by the user is valid for
+        argument type.
+
+        Validation should be called before value is stored in Argument
+        instance.
+        """
+        return value == self.argo.name, 'Value does not match constant'
+
 
 # -----------------------------------------------------------------------------
 #
@@ -356,6 +368,61 @@ class Enum(Str):
         else:
             return self.values
 
+    def validate(self, value):
+        """validate method returns if value entered by the user is valid for
+        argument type.
+
+        Validation should be called before value is stored in Argument
+        instance.
+        """
+        return value in self.values, 'Value is not in enumeration'
+
+
+# -----------------------------------------------------------------------------
+#
+class Range(Str):
+    """Range class is the class for any enumeration argument.
+    """
+
+    def __init__(self, values, **kwargs):
+        super(Range, self).__init__(**kwargs)
+        self.values = values
+
+    def get_help_str(self):
+        """get_help_str method returns default string to be displayed as help.
+
+        Returns:
+            str : string with default help.
+        """
+        if self.help_str:
+            return super(Range, self).get_help()
+        else:
+            result = ''
+            for _range in self.values:
+                if len(_range) == 2:
+                    result += '{} - {}, '.format(_range[0], _range[1])
+                else:
+                    result += '{}'.format(', '.join([str(x) for x in _range]))
+            return result
+
+    def validate(self, value):
+        """validate method returns if value entered by the user is valid for
+        argument type.
+
+        Validation should be called before value is stored in Argument
+        instance.
+        """
+        try:
+            value = int(value)
+        except ValueError:
+            return False, 'Value is not an integer'
+        for _range in self.values:
+            if len(_range) != 2:
+                return value in _range, 'Value is not in range'
+            elif _range[0] <= value <= _range[1]:
+                return True, ''
+        return False, 'Value is not in range'
+
 
 # -----------------------------------------------------------------------------
 #
@@ -385,7 +452,7 @@ class Dicta(Str):
         """validate method returns if value entered by the user is valid for
         argument type.
         """
-        return '=' in value
+        return '=' in value, 'Value does not contain "="'
 
 
 # -----------------------------------------------------------------------------
