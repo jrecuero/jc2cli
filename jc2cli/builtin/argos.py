@@ -277,7 +277,8 @@ class Range(Str):
             return False, 'Value is not an integer'
         for _range in self.values:
             if len(_range) != 2:
-                return value in _range, 'Value is not in range'
+                if value in _range:
+                    return True, ''
             elif _range[0] <= value <= _range[1]:
                 return True, ''
         return False, 'Value is not in range'
