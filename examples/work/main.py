@@ -1,5 +1,5 @@
 from jc2cli.decorators import command, mode, argo
-from jc2cli.argo_types import Str, Int, Line, CliType
+from jc2cli.argo_types import Str, Int, Line, CliType, Constant
 from jc2cli.error_handler import CliValidationError
 import jc2cli.tools.loggerator as loggerator
 
@@ -88,8 +88,8 @@ def do_add_tenant(tname):
 
 
 @command('SPINE [<eth> | <l3out> ]! name')
-@argo('eth', Str(), 'none')
-@argo('l3out', Str(), 'none')
+@argo('eth', Constant(), 'none')
+@argo('l3out', Constant(), 'none')
 @argo('name', Str(), None)
 def do_spine(eth, l3out, name):
     logger.display('SPINE: running in main module with eth: "{}" and l3out: "{}" with {}'.format(eth, l3out, name))
@@ -97,7 +97,7 @@ def do_spine(eth, l3out, name):
 
 
 @command('LEAF [<eth> | l3out]! leafname [primary | secondary]? device')
-@argo('eth', Str(), 'none')
+@argo('eth', Constant(), 'none')
 @argo('l3out', Str(), 'none')
 @argo('leafname', Str(), None)
 @argo('primary', Str(), 'none')

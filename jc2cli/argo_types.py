@@ -313,6 +313,36 @@ class Str(CliType):
 
 # -----------------------------------------------------------------------------
 #
+class Constant(Str):
+    """Str class is the class for any string argument.
+    """
+
+    def _help_str(self):
+        """_help_str method returns default string to be displayed as help.
+
+        Returns:
+            str : string with default help.
+        """
+        return 'Enter "{}"'.format(self.argo.name)
+
+    def get_complete_list(self, document, text):
+        """get_complete_list method gets a list with all possible options to
+        be included in complete.
+
+        Args:
+            document (object) : document object with all command line
+            input data.
+
+            text (str): last token in the line being entered.
+
+        Returns:
+            list : list with possible complete options
+        """
+        return [self.argo.name, ]
+
+
+# -----------------------------------------------------------------------------
+#
 class Dicta(Str):
     """Dicta class is the class for any dictionary argument.
     """

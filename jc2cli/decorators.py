@@ -41,7 +41,7 @@ def _command(f, wrapper, syntax, namespace, internal=False):
     """_command implements common functionality for @command and @icommand
     decorators.
     """
-    logger.display('command : syntax : {0}'.format(syntax))
+    logger.info('command : syntax : {0}'.format(syntax))
     node = Tree.fnode(f, wrapper)
     node.command.syntax = syntax
     node.command.internal = internal
@@ -54,7 +54,7 @@ def _mode(f, wrapper, syntax, ns_mode, namespace, internal=False):
     """_mode implements common functionality for @mode and @imode
     decorators.
     """
-    logger.display('mode : syntax : {0} : namespace {1}'.format(syntax, ns_mode))
+    logger.info('mode : syntax : {0} : namespace {1}'.format(syntax, ns_mode))
     node = Tree.fnode(f, wrapper, mode=True)
     node.command.syntax = syntax
     node.command.namespace = ns_mode
@@ -138,7 +138,7 @@ def argo(argo_name, argo_type, argo_default=None):
         def _wrapper(*args, **kwargs):
             return f(*args, **kwargs)
 
-        logger.display('called for {0}'.format(argo_name))
+        logger.info('called for {0}'.format(argo_name))
         node = Tree.fnode(f, _wrapper)
         argument = Argument(argo_name, argo_type, default=argo_default)
         node.command.add_argument(argument)
