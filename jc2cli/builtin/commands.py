@@ -11,7 +11,7 @@ __docformat__ = 'restructuredtext en'
 #
 from jc2cli.tree import Tree
 from jc2cli.decorators import command, help, icommand, argo
-from jc2cli.argo_types import Int, Str
+from jc2cli.builtin.argos import Int, Str
 import jc2cli.tools.loggerator as loggerator
 
 

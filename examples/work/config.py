@@ -1,5 +1,5 @@
 from jc2cli.decorators import command, argo
-from jc2cli.argo_types import Str
+from jc2cli.builtin.argos import Str
 import jc2cli.tools.loggerator as loggerator
 
 MODULE = 'EXAMPLES.WORK.config'

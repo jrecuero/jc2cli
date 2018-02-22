@@ -21,7 +21,7 @@ import jc2cli.tools.loggerator as loggerator
 #
 # -----------------------------------------------------------------------------
 #
-MODULE = 'DEFAULTS.handlers'
+MODULE = 'BUILTIN.handlers'
 logger = loggerator.getLoggerator(MODULE)
 
 

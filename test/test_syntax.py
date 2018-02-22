@@ -1,6 +1,6 @@
 import pytest
 from jc2cli.decorators import command, argo
-from jc2cli.argo_types import Str, Int, Dicta
+from jc2cli.builtin.argos import Str, Int, Dicta
 from jc2cli.namespace import Handler
 from jc2cli.error_handler import CliError, CliValidationError
 

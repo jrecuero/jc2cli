@@ -1,5 +1,6 @@
 from jc2cli.decorators import command, mode, argo
-from jc2cli.argo_types import Str, Int, Line, CliType, Constant, Enum, Range
+from jc2cli.argo_types import CliType
+from jc2cli.builtin.argos import Str, Int, Line, Constant, Enum, Range
 import jc2cli.tools.loggerator as loggerator
 
 MODULE = 'EXAMPLES.WORK.main'

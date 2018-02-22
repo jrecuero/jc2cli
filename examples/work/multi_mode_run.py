@@ -1,6 +1,6 @@
 from functools import partial
 from jc2cli.namespace import Handler
-from jc2cli.builin.handlers import handler_mode, handler_none
+from jc2cli.builtin.handlers import handler_mode, handler_none
 
 
 class RunCli(object):

@@ -12,8 +12,8 @@ _docformat__ = 'restructuredtext en'
 from jc2cli.parser.rules import RuleHandler as RH
 from jc2cli.error_handler import CliError
 from jc2cli.arguments import Argument
-from jc2cli.argo_types import Prefix
-from jc2cli.argo_types import End as ArgoEnd
+from jc2cli.builtin.argos import Prefix
+from jc2cli.builtin.argos import End as ArgoEnd
 import jc2cli.tools.loggerator as loggerator
 
 
