@@ -24,7 +24,7 @@ import jc2cli.tools.loggerator as loggerator
 #
 # -----------------------------------------------------------------------------
 #
-MODULE = 'DEFAULTS.commands'
+MODULE = 'BUILTIN.commands'
 logger = loggerator.getLoggerator(MODULE)
 
 
@@ -119,7 +119,7 @@ def do_help():
     return True
 
 
-class Defaults(object):
+class BuiltIns(object):
 
         @command('exit')
         @help('Exit')
@@ -181,9 +181,9 @@ class Defaults(object):
             return do_debug_cmd(ns_handler, cmd)
 
 
-def defaults_namespace():
-    return 'jc2cli.default.commands'
+def builtins_namespace():
+    return 'jc2cli.builtin.commands'
 
 
-def class_defaults_namespace():
-    return 'jc2cli.default.commands.Defaults'
+def class_builtins_namespace():
+    return 'jc2cli.builtin.commands.BuiltIns'

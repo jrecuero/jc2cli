@@ -14,8 +14,8 @@ from jc2cli.tree import Tree
 from jc2cli.base import Base
 from jc2cli.context import Context
 import jc2cli.tools.loggerator as loggerator
-from jc2cli.default.handlers import handler
-from jc2cli.default.commands import defaults_namespace, class_defaults_namespace
+from jc2cli.builtin.handlers import handler
+from jc2cli.builtin.commands import builtins_namespace, class_builtins_namespace
 
 
 # -----------------------------------------------------------------------------
@@ -105,9 +105,9 @@ class Handler(object):
         new_ns_handler = NameSpace(namespace, self.new_ns_context(), start=False, **kwargs)
         self.ns_handlers[namespace] = new_ns_handler
         if kwargs.get('is_class_cmd', False):
-            self.extend_namespace(namespace, class_defaults_namespace())
+            self.extend_namespace(namespace, class_builtins_namespace())
         else:
-            self.extend_namespace(namespace, defaults_namespace())
+            self.extend_namespace(namespace, builtins_namespace())
         self.ns_module = kwargs.get('ns_module', namespace)
         self.extend_namespace(namespace, self.ns_module)
         return new_ns_handler
