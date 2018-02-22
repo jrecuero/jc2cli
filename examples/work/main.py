@@ -1,5 +1,5 @@
 from jc2cli.decorators import command, mode, argo
-from jc2cli.argo_types import Str, Int, Line, CliType, Constant
+from jc2cli.argo_types import Str, Int, Line, CliType, Constant, Enum
 from jc2cli.error_handler import CliValidationError
 import jc2cli.tools.loggerator as loggerator
 
@@ -17,12 +17,8 @@ class T_Tenant(CliType):
     def __init__(self, db_data_cb, **kwargs):
         super(T_Tenant, self).__init__(**kwargs)
         self._tenants_cb = db_data_cb
-
-    def _help_str(self):
-        return 'Enter the Tenant where you want to go.'
-
-    def get_complete_list(self, document, text):
-        return self._tenants_cb()
+        self.help_str = 'Enter the Tenant where you want to go.'
+        self.complete_list = self._tenants_cb()
 
     def validate(self, value):
         if value not in self._tenants_cb():
@@ -105,6 +101,13 @@ def do_spine(eth, l3out, name):
 @argo('device', Str(), None)
 def do_leaf(eth, l3out, leafname, primary, secondary, device):
     logger.display('LEAF: {} | {} {} {} | {} {}'.format(eth, l3out, leafname, primary, secondary, device))
+    return True
+
+
+@command('PROFILE ptype')
+@argo('ptype', Enum(['app', 'l3', 'l2']), 'app')
+def do_profile(ptype):
+    logger.display('PROFILE type: {}'.format(ptype))
     return True
 
 
