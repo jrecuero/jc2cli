@@ -47,7 +47,7 @@ class Prefix(CliType):
             str : string with default help.
         """
         if self.help_str:
-            return super(Prefix, self).get_help()
+            return super(Prefix, self).get_help_str()
         else:
             return '-{0}'.format(self.label)
 
@@ -95,7 +95,7 @@ class Int(CliType):
             str : string with default help.
         """
         if self.help_str:
-            return super(Int, self).get_help()
+            return super(Int, self).get_help_str()
         else:
             return 'Enter a number'
 
@@ -142,7 +142,7 @@ class Str(CliType):
             str : string with default help.
         """
         if self.help_str:
-            return super(Str, self).get_help()
+            return super(Str, self).get_help_str()
         else:
             return 'Enter a string'
 
@@ -160,7 +160,7 @@ class Constant(Str):
             str : string with default help.
         """
         if self.help_str:
-            return super(Constant, self).get_help()
+            return super(Constant, self).get_help_str()
         else:
             return 'Enter "{}"'.format(self.argo.name)
 
@@ -207,7 +207,7 @@ class Enum(Str):
             str : string with default help.
         """
         if self.help_str:
-            return super(Enum, self).get_help()
+            return super(Enum, self).get_help_str()
         else:
             return '{}'.format(", ".join(self.values))
 
@@ -254,7 +254,7 @@ class Range(Str):
             str : string with default help.
         """
         if self.help_str:
-            return super(Range, self).get_help()
+            return super(Range, self).get_help_str()
         else:
             result = ''
             for _range in self.values:

@@ -144,3 +144,17 @@ class Handler(object):
 
     def active_namespace(self):
         return self.context.root.active_namespace
+
+    def create_cli_for_namespace(self, namespace):
+        self.create_namespace(namespace)
+        self.context.root.switch_to(namespace)
+        return self.get_namespace(namespace).cli.exec_user_input
+
+    def build_cli_for_namespace(self, namespace):
+        __import__(namespace)
+        return self.create_cli_for_namespace(namespace)
+
+    def run_cli_commands_for_namespace(self, namespace, commands):
+        cli = self.build_cli_for_namespace(namespace)
+        for cmd in commands:
+            cli(cmd)

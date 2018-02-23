@@ -1,6 +1,6 @@
 from jc2cli.decorators import command, mode, argo
 from jc2cli.argo_types import CliType
-from jc2cli.builtin.argos import Str, Int, Line, Constant, Enum, Range
+from jc2cli.builtin.argos import Str, Int, Line, Constant, Enum, Range, Dicta
 import jc2cli.tools.loggerator as loggerator
 
 MODULE = 'EXAMPLES.WORK.main'
@@ -107,6 +107,13 @@ def do_leaf(eth, l3out, leafname, primary, secondary, device):
 @argo('ptype', Enum(['app', 'l3', 'l2']), 'app')
 def do_profile(ptype):
     logger.display('PROFILE type: {}'.format(ptype))
+    return True
+
+
+@command('CREATE [info]@')
+@argo('info', Dicta(), {})
+def do_create(info):
+    logger.display('CREATE: {}'.format(info))
     return True
 
 
