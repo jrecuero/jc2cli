@@ -18,9 +18,16 @@ class Node(object):
             self.command = Mode(cb)
         else:
             self.command = None
+        self.loaded = True
+        self.enabled = True
 
     def is_command(self):
         return not isinstance(self.command, Mode)
 
     def is_mode(self):
         return isinstance(self.command, Mode)
+
+    def is_usable(self):
+        """is_usable returns if the command is loaded and enabled.
+        """
+        return self.enabled and self.loaded

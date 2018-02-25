@@ -87,13 +87,33 @@ def do_import(ns_handler, filename):
     return True
 
 
-@icommand('debug cmd')
+@icommand('debug [cmd | tree | ns | nscmd]+')
 @help('Internal command for CLI application debug')
-@argo('cmd', Str(), None)
-def do_debug_cmd(ns_handler, cmd):
-    node = Tree.get_node(cmd)
-    if node:
-        print(node.command.syntax_root)
+@argo('cmd', Str(help='command tree structure for command  ...'), '')
+@argo('tree', Str(help='commands imported for pattern ... ["." for all]'), '')
+@argo('ns', Str(help='namespaces for pattern ... ["." for all]'), '')
+@argo('nscmd', Str(help='commands in namespace with pattern ... ["." for all]'), '')
+def do_debug_cmd(ns_handler, cmd, tree, ns, nscmd):
+    if cmd:
+        node = Tree.get_node(cmd)
+        if node:
+            logger.display(node.command.syntax_root)
+    elif tree:
+        tree = '' if tree == '.' else tree
+        for k, v in Tree.root().get_db().items():
+            if tree in k:
+                logger.display('{} : {}'.format(k, v))
+    elif ns:
+        ns = '' if ns == '.' else ns
+        for n in Tree.get_all_namespaces():
+            if ns in n:
+                logger.display('{}'.format(n))
+    elif nscmd:
+        nscmd = '' if nscmd == '.' else nscmd
+        for n in Tree.get_all_namespaces():
+            if nscmd in n:
+                for k, v in Tree.command_tree_namespace(n).items():
+                    logger.display('[{}] {} : {}'.format(n, k, v))
     return True
 
 

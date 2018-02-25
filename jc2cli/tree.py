@@ -37,12 +37,25 @@ logger = loggerator.getLoggerator(MODULE)
 # -----------------------------------------------------------------------------
 #
 class Tree(object):
+    """Tree class contains all class methods required to access all loaded commands.
+
+    Tree contains one single instace for the inner class _Tree, where all commands
+    are stored. Every command is fully identified by its module [and class name] and
+    function or method name. That information is contained in what is called as
+    a Node.
+
+    Active commands available to be used are stored in the __COMMAND_TREE dictionary,
+    using 'namespace' as key to identify every set of commands.
+
+    Commands have to be loaded from the Tree.root() to the __COMMAND_TREE in order
+    to be able to access to them.
+    """
 
     __ROOT = None
     __COMMAND_TREE = {}
-    __MODE_TREE = {}
     __ACTIVE_CMD_NS = None
-    __ACTIVE_MODE_NS = None
+    # __MODE_TREE = {}
+    # __ACTIVE_MODE_NS = None
 
     class _Tree(object):
 
@@ -87,11 +100,35 @@ class Tree(object):
         return cls.__new__(cls)
 
     @classmethod
+    def node(cls, name, cb, mode=False):
+        """node adds/retrieves a node to/from the node tree.
+
+        The node is identified by the node name, if the node is already
+        present in the node tree, it retrieves the node instead of adding
+        it.
+        """
+        root = Tree.root()
+        node = root.get_node(name)
+        if not node:
+            node = Node(name, cb, mode)
+            root.add_node(node.name, node)
+        return node
+
+    @classmethod
+    def fnode(cls, f, cb, mode=False):
+        """fnode creates a node based on the qualified name for the
+        function callback. It makes use of the module where the callback
+        is defined and the callback function qualified name."""
+        node_name = '{0}.{1}'.format(f.__module__, f.__qualname__)
+        return cls.node(node_name, cb, mode)
+
+    @classmethod
     def command_tree_namespace(cls, namespace):
         """command_tree_namespace retrieves all commands for the given
         namespace.
         """
-        return cls.__COMMAND_TREE[namespace]
+        # return cls.__COMMAND_TREE[namespace]
+        return {k: v for k, v in cls.__COMMAND_TREE[namespace].items() if v.is_usable()}
 
     @classmethod
     def active_namespace(cls):
@@ -149,6 +186,15 @@ class Tree(object):
             return False
 
     @classmethod
+    def import_ns_module(cls, ns_module):
+        """import_ns_module imports all commands from the ns_module.
+
+        Commands will be loaded in the Tree.roo() dictionary, they will be
+        available to be loaded in the command tree.
+        """
+        __import__(ns_module)
+
+    @classmethod
     def build_command_tree_from_ns_module(cls, ns_module, full_matched=True):
         """build_command_tree_from_ns_module creates a new command tree
         dictionary looking for all commands matching ns_module.
@@ -166,33 +212,12 @@ class Tree(object):
         return {v.command.name: v for (k, v) in traverse.items()}
 
     @classmethod
-    def node(cls, name, cb, mode=False):
-        """node adds/retrieves a node to/from the node tree.
-
-        The node is identified by the node name, if the node is already
-        present in the node tree, it retrieves the node instead of adding
-        it.
-        """
-        root = Tree.root()
-        node = root.get_node(name)
-        if not node:
-            node = Node(name, cb, mode)
-            root.add_node(node.name, node)
-        return node
-
-    @classmethod
-    def fnode(cls, f, cb, mode=False):
-        """fnode creates a node based on the qualified name for the
-        function callback. It makes use of the module where the callback
-        is defined and the callback function qualified name."""
-        node_name = '{0}.{1}'.format(f.__module__, f.__qualname__)
-        return cls.node(node_name, cb, mode)
-
-    @classmethod
-    def start(cls, namespace, ns_module, full_matched=True):
+    def start(cls, namespace, ns_module, full_matched=True, import_ns=False):
         """start creates a namespace with all commands for the given
         ns_module.
         """
+        if import_ns:
+            cls.import_ns_module(ns_module)
         cls.create(namespace)
         command_tree = cls.build_command_tree_from_ns_module(ns_module, full_matched)
         return cls.set_command_tree(namespace, command_tree)

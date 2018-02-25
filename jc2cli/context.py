@@ -38,7 +38,30 @@ class Context(object):
 
     def __init__(self, root=None):
         self.__root = root
+        self.__cache = {}
 
     @property
     def root(self):
         return self.__root
+
+    def get_from_cache(self, key):
+        """Retreives some data to the cache.
+
+        Args:
+            key (object) : key for the cached data to be retrieved.
+
+        Returns:
+            object : data found in cache, None if key is not found.
+        """
+        return self.__cache.get(key, None)
+
+    def set_to_cache(self, key, value):
+        """Adds cache data for the given key.
+
+        If the key already exits, the data is being overwritten.
+
+        Args:
+            key (object) : key for the data to be cached.
+            value (object) : data being cached.
+        """
+        self.__cache[key] = value
