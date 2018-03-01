@@ -18,7 +18,7 @@ class RunCli(object):
         handler.create_namespace('main',
                                  ns_module='examples.work.main',
                                  handler=partial(handler_mode, handler.get_namespace('cli')))
-        handler.switch_and_run_namespace('main')
+        handler.switch_and_run_namespace('main', rprompt='<MULTI-RUN>')
 
 
 if __name__ == '__main__':

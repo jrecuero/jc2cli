@@ -159,17 +159,17 @@ class Handler(object):
             return True
         return False
 
-    def switch_and_run_namespace(self, namespace):
+    def switch_and_run_namespace(self, namespace, **kwargs):
         """switch_and_run_namespace switches and run the given namespace.
         """
         if namespace in self.ns_handlers:
-            self.ns_handlers[namespace].switch_and_run()
+            self.ns_handlers[namespace].switch_and_run(**kwargs)
 
-    def run_namespace(self, namespace):
+    def run_namespace(self, namespace, **kwargs):
         """run_namespace runs the given namespace.
         """
         if namespace in self.ns_handlers:
-            self.ns_handlers[namespace].run_cli()
+            self.ns_handlers[namespace].run_cli(**kwargs)
 
     def active_namespace(self):
         """active_namespace retrieves the active namespace in the Tree

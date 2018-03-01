@@ -15,7 +15,7 @@ class RunCli(object):
 
         handler = Handler()
         handler.create_namespace('examples.work.main')
-        handler.switch_and_run_namespace('examples.work.main')
+        handler.switch_and_run_namespace('examples.work.main', rprompt='<RUN>')
 
 
 if __name__ == '__main__':
