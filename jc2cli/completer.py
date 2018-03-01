@@ -37,12 +37,23 @@ logger = loggerator.getLoggerator(MODULE)
 #
 class CliCompleter(Completer):
 
-    def __init__(self, cli):
+    def __init__(self, cli, **kwargs):
         self._node_path = None
         self._cli = cli
+        self._refresh_toolbar = kwargs.get('toolbar', True)
+        self._refresh_rprompt = kwargs.get('rprompt', False)
 
     def reset(self):
         self._node_path = None
+
+    def _update_toolbar(self, messages):
+        if self._refresh_toolbar:
+            self._cli.toolbar_str = " | ".join(messages)
+
+    def _update_rprompt(self, messages):
+        if self._refresh_rprompt:
+            self._cli.rprompt_str = " | ".join(messages)
+        pass
 
     def get_completions(self, document, complete_event):
         matches = None
@@ -92,7 +103,8 @@ class CliCompleter(Completer):
 
                 if children_nodes:
                     helps = [c.completer.help(last_token) for c in children_nodes]
-                    self._cli.toolbar_str = " | ".join(helps)
+                    self._update_toolbar(helps)
+                    self._update_rprompt(helps)
                     for child in children_nodes:
                         logger.debug('child is: {0}'.format(child.label))
                         matches = child.completer.complete(document, last_token)

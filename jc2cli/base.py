@@ -302,8 +302,10 @@ class Base(object):
         Returns:
             str : String with the input entered by the user.
         """
-        history = FileHistory('history.txt')
-        completer = CliCompleter(self)
+        history = kwargs.get('history', FileHistory('history.txt'))
+        completer = kwargs.get('completer', CliCompleter(self))
+        validator = kwargs.get('validator', None)
+        style = kwargs.get('style', DocumentStyle)
 
         toolbar = kwargs.get('toolbar', 'Enter a valid command')
         self.toolbar_str = toolbar if isinstance(toolbar, str) else toolbar()
@@ -317,8 +319,9 @@ class Base(object):
 
         user_input = prompt(history=history,
                             auto_suggest=AutoSuggestFromHistory(),
-                            style=DocumentStyle,
+                            style=style,
                             completer=completer,
+                            validator=validator,
                             get_bottom_toolbar_tokens=self.get_bottom_toolbar_tokens,
                             get_prompt_tokens=self.get_prompt_tokens,
                             get_rprompt_tokens=self.get_rprompt_tokens,
