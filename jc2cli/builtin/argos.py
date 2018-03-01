@@ -317,6 +317,105 @@ class Dicta(Str):
 
 # -----------------------------------------------------------------------------
 #
+class Lista(Str):
+    """Lista class is the class for list arguments.
+    """
+
+    def store(self, value, matched=False):
+        """store method stores a value in the argument for the type.
+
+        Args:
+            value (object) : Value to store in the argument.
+
+            matched (bool) : True is argument was already matched and found\
+                    in the command line entry.
+
+        Returns:
+            None
+        """
+        self.argo.value = value.split(',')
+
+
+# -----------------------------------------------------------------------------
+#
+class Vector2D(Str):
+    """Vector2D class is the class for 2D-vector arguments.
+    """
+
+    def store(self, value, matched=False):
+        """store method stores a value in the argument for the type.
+
+        Args:
+            value (object) : Value to store in the argument.
+
+            matched (bool) : True is argument was already matched and found\
+                    in the command line entry.
+
+        Returns:
+            None
+        """
+        value_list = value.split(',')
+        if len(value_list) == 1:
+            value += ',0'
+        self.argo.value = [int(x) for x in value.split(',')]
+
+    def validate(self, value):
+        """validate method returns if value entered by the user is valid for
+        argument type.
+        """
+        value_list = value.split(',')
+        if len(value_list) > 2:
+            return False, 'Too many values for a Vector2D'
+        try:
+            for x in value_list:
+                int(x)
+            return True, ''
+        except ValueError:
+            return False, 'Value "{}"is not an integer'.format(x)
+
+
+# -----------------------------------------------------------------------------
+#
+class Vector3D(Str):
+    """Vector3D class is the class for 3D-vector arguments.
+    """
+
+    def store(self, value, matched=False):
+        """store method stores a value in the argument for the type.
+
+        Args:
+            value (object) : Value to store in the argument.
+
+            matched (bool) : True is argument was already matched and found\
+                    in the command line entry.
+
+        Returns:
+            None
+        """
+        value_list = value.split(',')
+        if len(value_list) == 1:
+            value += ',0,0'
+        elif len(value_list) == 2:
+            value += ',0'
+        self.argo.value = [int(x) for x in value.split(',')]
+
+    def validate(self, value):
+        """validate method returns if value entered by the user is valid for
+        argument type.
+        """
+        value_list = value.split(',')
+        if len(value_list) > 3:
+            return False, 'Too many values for a Vector2D'
+        try:
+            for x in value_list:
+                int(x)
+            return True, ''
+        except ValueError:
+            return False, 'Value "{}"is not an integer'.format(x)
+
+
+# -----------------------------------------------------------------------------
+#
 class Line(CliType):
     """Line class is the class for any full line argument.
 

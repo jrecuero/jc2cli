@@ -1,6 +1,7 @@
 import pytest
 from jc2cli.decorators import command, argo
-from jc2cli.builtin.argos import Str, Int, Enum, Range, Constant, Line, Dicta
+from jc2cli.builtin.argos import Str, Int, Enum, Range, Constant
+from jc2cli.builtin.argos import Line, Dicta, Lista, Vector2D, Vector3D
 from jc2cli.namespace import Handler
 from jc2cli.error_handler import CliError, CliValidationError
 
@@ -194,5 +195,89 @@ def test_command_seven_ok(cli_call, commands, results):
                           'COMMAND-SEVEN one id=1',
                           'COMMAND-SEVEN one id=1 one', ])
 def test_command_seven_fail(cli_call, commands):
+    with pytest.raises((CliError, CliValidationError)):
+        cli_call(commands, reraise=True)
+
+
+#
+# Test command without Lista argument
+@command('COMMAND-EIGHT lista')
+@argo('lista', Lista(), [])
+def do_command_eight(lista):
+    return 'cEIGHT {}'.format(lista)
+
+
+@pytest.mark.parametrize(('commands', 'results'),
+                         [('COMMAND-EIGHT 0', "cEIGHT ['0']"),
+                          ('COMMAND-EIGHT 1,2,3', "cEIGHT ['1', '2', '3']"), ])
+def test_command_eight_ok(cli_call, commands, results):
+    result = cli_call(commands, reraise=True)
+    assert result == results
+
+
+@pytest.mark.parametrize('commands',
+                         ['COMMAND-EIGHT',
+                          'COMMAND-EIGHT one two', ])
+def test_command_eight_fail(cli_call, commands):
+    with pytest.raises((CliError, CliValidationError)):
+        cli_call(commands, reraise=True)
+
+
+#
+# Test command without Vector2D argument
+@command('COMMAND-NINE vector')
+@argo('vector', Vector2D(), [])
+def do_command_nine(vector):
+    return 'cNINE {}'.format(vector)
+
+
+@pytest.mark.parametrize(('commands', 'results'),
+                         [('COMMAND-NINE 0', "cNINE [0, 0]"),
+                          ('COMMAND-NINE 1,2', "cNINE [1, 2]"), ])
+def test_command_nine_ok(cli_call, commands, results):
+    result = cli_call(commands, reraise=True)
+    assert result == results
+
+
+@pytest.mark.parametrize('commands',
+                         ['COMMAND-NINE',
+                          'COMMAND-NINE one',
+                          'COMMAND-NINE 1,two',
+                          'COMMAND-NINE one,2',
+                          'COMMAND-NINE one,two',
+                          'COMMAND-NINE 1,2,3', ])
+def test_command_nine_fail(cli_call, commands):
+    with pytest.raises((CliError, CliValidationError)):
+        cli_call(commands, reraise=True)
+
+
+#
+# Test command without Vector3D argument
+@command('COMMAND-TEN vector')
+@argo('vector', Vector3D(), [])
+def do_command_ten(vector):
+    return 'cTEN {}'.format(vector)
+
+
+@pytest.mark.parametrize(('commands', 'results'),
+                         [('COMMAND-TEN 0', "cTEN [0, 0, 0]"),
+                          ('COMMAND-TEN 1,2', "cTEN [1, 2, 0]"),
+                          ('COMMAND-TEN 1,2,3', "cTEN [1, 2, 3]"), ])
+def test_command_ten_ok(cli_call, commands, results):
+    result = cli_call(commands, reraise=True)
+    assert result == results
+
+
+@pytest.mark.parametrize('commands',
+                         ['COMMAND-TEN',
+                          'COMMAND-TEN one',
+                          'COMMAND-TEN 1,two',
+                          'COMMAND-TEN one,2',
+                          'COMMAND-TEN one,two',
+                          'COMMAND-TEN 1,one,two',
+                          'COMMAND-TEN one,2,two',
+                          'COMMAND-TEN one,two,3',
+                          'COMMAND-TEN 1,2,3,4', ])
+def test_command_ten_fail(cli_call, commands):
     with pytest.raises((CliError, CliValidationError)):
         cli_call(commands, reraise=True)
