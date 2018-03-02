@@ -15,7 +15,7 @@ def _quoted(st):
 @pytest.fixture(params=[NAMESPACE])
 def cli_call(request):
     h = Handler()
-    return h.create_cli_for_namespace(request.param)
+    return h.get_cli_exec_after_create_and_switch(request.param)
 
 
 #

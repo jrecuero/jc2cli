@@ -2,7 +2,7 @@ from jc2cli.decorators import command, argo
 from jc2cli.builtin.argos import Int
 import jc2cli.tools.loggerator as loggerator
 
-MODULE = 'EXAMPLES.WORK.execute'
+MODULE = 'EX.WORK.execute'
 logger = loggerator.getLoggerator(MODULE)
 
 

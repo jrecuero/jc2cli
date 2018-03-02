@@ -4,7 +4,7 @@ from jc2cli.namespace import Handler
 from jc2cli.builtin.argos import Str
 import jc2cli.tools.loggerator as loggerator
 
-MODULE = 'EXAMPLES.WORK.local_run'
+MODULE = 'EX.WORK.local_run'
 logger = loggerator.getLoggerator(MODULE)
 
 
@@ -24,7 +24,7 @@ class RunCli(object):
         __import__(namespace)
         handler = Handler()
         handler.create_namespace(namespace)
-        handler.switch_and_run_namespace(namespace)
+        handler.switch_and_run_cli_for_namespace(namespace)
 
 
 if __name__ == '__main__':

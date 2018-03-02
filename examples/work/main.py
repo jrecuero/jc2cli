@@ -3,7 +3,7 @@ from jc2cli.argo_types import CliType
 from jc2cli.builtin.argos import Str, Int, Line, Constant, Enum, Range, Dicta
 import jc2cli.tools.loggerator as loggerator
 
-MODULE = 'EXAMPLES.WORK.main'
+MODULE = 'EX.WORK.main'
 logger = loggerator.getLoggerator(MODULE)
 database = ['COKE', 'PEPSI']
 
@@ -122,6 +122,14 @@ def do_create(info):
 def do_speed(value):
     logger.display('SPEED: {}'.format(value))
     return True
+
+
+@command('UI app default')
+@argo('app', Str(help='Enter app name'), "none")
+@argo('default', Str(help='Enter default value'), "none")
+def do_ui(app, default):
+    logger.display('UI: running in main module with "{0}" and "{1}"'.format(app, default))
+    return 'UI: running in main module with "{0}" and "{1}"'.format(app, default)
 
 
 @command('exit')

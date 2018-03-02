@@ -134,8 +134,8 @@ class Handler(object):
         if namespace in self.ns_handlers:
             del self.ns_handlers[namespace]
 
-    def get_namespace(self, namespace):
-        """get_namespace retrieves the given namespace.
+    def get_ns_handler(self, namespace):
+        """get_ns_handler retrieves the given namespace.
         """
         if namespace in self.ns_handlers:
             return self.ns_handlers[namespace]
@@ -147,7 +147,7 @@ class Handler(object):
         """
         if namespace in self.ns_handlers:
             commands = self.context.root.extend(namespace, ns_extended)
-            self.get_namespace(namespace).update_commands(commands)
+            self.get_ns_handler(namespace).update_commands(commands)
             return True
         return False
 
@@ -159,14 +159,14 @@ class Handler(object):
             return True
         return False
 
-    def switch_and_run_namespace(self, namespace, **kwargs):
-        """switch_and_run_namespace switches and run the given namespace.
+    def switch_and_run_cli_for_namespace(self, namespace, **kwargs):
+        """switch_and_run_cli_for_namespace switches and run the given namespace.
         """
         if namespace in self.ns_handlers:
             self.ns_handlers[namespace].switch_and_run(**kwargs)
 
-    def run_namespace(self, namespace, **kwargs):
-        """run_namespace runs the given namespace.
+    def run_cli_for_namespace(self, namespace, **kwargs):
+        """run_cli_for_namespace runs the given namespace.
         """
         if namespace in self.ns_handlers:
             self.ns_handlers[namespace].run_cli(**kwargs)
@@ -177,33 +177,33 @@ class Handler(object):
         """
         return self.context.root.active_namespace
 
-    def create_and_switch_for_namespace(self, namespace):
-        """create_and_switch_for_namespace creates a new namespace, switches to
+    def get_ns_handler_after_create_and_switch(self, namespace):
+        """get_ns_handler_after_create_and_switch creates a new namespace, switches to
         that namespace and returns the namespace handler.
         """
         self.create_namespace(namespace)
         self.context.root.switch_to(namespace)
-        return self.get_namespace(namespace)
+        return self.get_ns_handler(namespace)
 
-    def create_cli_for_namespace(self, namespace):
-        """create_cli_for_namespace creates a new namespace, switches to the
+    def get_cli_exec_after_create_and_switch(self, namespace):
+        """get_cli_exec_after_create_and_switch creates a new namespace, switches to the
         namespace and return the function that execute commands in the cli.
         """
         self.create_namespace(namespace)
         self.context.root.switch_to(namespace)
-        return self.get_namespace(namespace).cli.exec_user_input
+        return self.get_ns_handler(namespace).cli.exec_user_input
 
-    def build_cli_for_namespace(self, namespace):
-        """build_cli_for_namespace loads all namespace commands, create a new
+    def get_cli_exec_after_build_namespace(self, namespace):
+        """get_cli_exec_after_build_namespace loads all namespace commands, create a new
         namespace, switches to the namespace and returns the function that
         execute commands in the cli."""
         __import__(namespace)
-        return self.create_cli_for_namespace(namespace)
+        return self.get_cli_exec_after_create_and_switch(namespace)
 
     def run_cli_commands_for_namespace(self, namespace, commands):
         """run_cli_commands_for_namespace runs the given commands for the
         given namespace.
         """
-        cli = self.build_cli_for_namespace(namespace)
+        cli = self.get_cli_exec_after_build_namespace(namespace)
         for cmd in commands:
             cli(cmd)

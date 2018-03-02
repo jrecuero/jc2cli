@@ -10,7 +10,7 @@ NAMESPACE = 'test.test_decorator'
 @pytest.fixture(params=[NAMESPACE])
 def namespace_handler(request):
     h = Handler()
-    return h.create_and_switch_for_namespace(request.param)
+    return h.get_ns_handler_after_create_and_switch(request.param)
 
 
 #
