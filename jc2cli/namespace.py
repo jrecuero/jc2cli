@@ -14,7 +14,7 @@ from jc2cli.tree import Tree
 from jc2cli.base import Base
 from jc2cli.context import Context
 import jc2cli.tools.loggerator as loggerator
-from jc2cli.builtin.handlers import handler
+from jc2cli.builtin.handlers import handler, handler_none, handler_instance
 from jc2cli.builtin.commands import builtins_namespace, class_builtins_namespace
 
 
@@ -48,14 +48,28 @@ class NameSpace(object):
     a CLI instance for handling all those commands.
 
     It decouples the command tree from the actual CLI implementation.
+
+    ns_module should match the part of the module that contains all commands
+    that we want to run. namespace could be equal to the ns_module, that is
+    done by default, or could be any other value if we don't want to expose
+    the full module path.
+
+    module: exmaples.work.main
+    ns_module: example.work.main.Cli
+    namespae: main-cli
+
+    module is only required if __import__ has to be called.
     """
 
     def __init__(self, namespace, context, **kwargs):
         self.namespace = namespace
         self.context = context
         self.ns_module = kwargs.get('ns_module', namespace)
-        self.handler = kwargs.get('handler', handler)
-        self.handler = partial(self.handler, self)
+        self.module = kwargs.get('module', self.ns_module)
+        self.matched = kwargs.get('matched', True)
+        if kwargs.get('import_ns', False):
+            __import__(self.module)
+        self.handler, self._class_cmd_obj = self._get_handler(**kwargs)
         self.commands = None
         if kwargs.get('start', False):
             self.commands = self.start_commands()
@@ -65,10 +79,24 @@ class NameSpace(object):
         self.cli_class = kwargs.get('cli_class', Base)
         self.cli = self.create_cli()
 
+    def _get_handler(self, **kwargs):
+        class_cmd_obj = kwargs.get('class_cmd_obj', None)
+        if kwargs.get('is_class_cmd', False):
+            default_handler = handler_none
+        elif class_cmd_obj:
+            default_handler = handler_instance
+        else:
+            default_handler = handler
+        hdlr = kwargs.get('handler', default_handler)
+        hdlr = partial(hdlr, self)
+        if class_cmd_obj:
+            hdlr = partial(hdlr, class_cmd_obj)
+        return hdlr, class_cmd_obj
+
     def start_commands(self):
         """start_commands loads namespace commands as available.
         """
-        self.commands = self.context.root.start(self.namespace, self.ns_module)
+        self.commands = self.context.root.start(self.namespace, self.ns_module, self.matched)
         return self.commands
 
     def create_cli(self, *args, **kwargs):
@@ -101,6 +129,14 @@ class NameSpace(object):
         logger.trace('NameSpace {0} with {1}'.format(self.namespace, self.commands.keys() if self.commands else None))
         logger.trace('cli commands {0}'.format(self.cli.commands.keys() if self.cli.commands else None))
 
+    def extend(self, ns_extended):
+        """extend extends the namespace with the commands from a new
+        namespace module.
+        """
+        commands = self.context.root.extend(self.namespace, ns_extended, self.matched)
+        self.update_commands(commands)
+        return True
+
 
 class Handler(object):
     """Handler class implements a common handler for all namespaces.
@@ -120,12 +156,12 @@ class Handler(object):
         """
         new_ns_handler = NameSpace(namespace, self.new_ns_context(), start=False, **kwargs)
         self.ns_handlers[namespace] = new_ns_handler
-        if kwargs.get('is_class_cmd', False):
+        if kwargs.get('is_class_cmd', False) or kwargs.get('class_cmd_obj', False):
             self.extend_namespace(namespace, class_builtins_namespace())
         else:
             self.extend_namespace(namespace, builtins_namespace())
-        self.ns_module = kwargs.get('ns_module', namespace)
-        self.extend_namespace(namespace, self.ns_module)
+        ns_module = kwargs.get('ns_module', namespace)
+        self.extend_namespace(namespace, ns_module)
         return new_ns_handler
 
     def remove_namespace(self, namespace):
@@ -146,9 +182,7 @@ class Handler(object):
         from a new namespace module.
         """
         if namespace in self.ns_handlers:
-            commands = self.context.root.extend(namespace, ns_extended)
-            self.get_ns_handler(namespace).update_commands(commands)
-            return True
+            return self.get_ns_handler(namespace).extend(ns_extended)
         return False
 
     def switch_to_namespace(self, namespace):
@@ -177,33 +211,33 @@ class Handler(object):
         """
         return self.context.root.active_namespace
 
-    def get_ns_handler_after_create_and_switch(self, namespace):
+    def get_ns_handler_after_create_and_switch(self, namespace, **kwargs):
         """get_ns_handler_after_create_and_switch creates a new namespace, switches to
         that namespace and returns the namespace handler.
         """
-        self.create_namespace(namespace)
+        self.create_namespace(namespace, **kwargs)
         self.context.root.switch_to(namespace)
         return self.get_ns_handler(namespace)
 
-    def get_cli_exec_after_create_and_switch(self, namespace):
+    def get_cli_exec_after_create_and_switch(self, namespace, **kwargs):
         """get_cli_exec_after_create_and_switch creates a new namespace, switches to the
         namespace and return the function that execute commands in the cli.
         """
-        self.create_namespace(namespace)
+        self.create_namespace(namespace, **kwargs)
         self.context.root.switch_to(namespace)
         return self.get_ns_handler(namespace).cli.exec_user_input
 
-    def get_cli_exec_after_build_namespace(self, namespace):
+    def get_cli_exec_after_build_namespace(self, namespace, **kwargs):
         """get_cli_exec_after_build_namespace loads all namespace commands, create a new
         namespace, switches to the namespace and returns the function that
         execute commands in the cli."""
-        __import__(namespace)
-        return self.get_cli_exec_after_create_and_switch(namespace)
+        kwargs['import_ns'] = True
+        return self.get_cli_exec_after_create_and_switch(namespace, **kwargs)
 
-    def run_cli_commands_for_namespace(self, namespace, commands):
+    def run_cli_commands_for_namespace(self, namespace, commands, **kwargs):
         """run_cli_commands_for_namespace runs the given commands for the
         given namespace.
         """
-        cli = self.get_cli_exec_after_build_namespace(namespace)
+        cli = self.get_cli_exec_after_build_namespace(namespace, **kwargs)
         for cmd in commands:
             cli(cmd)

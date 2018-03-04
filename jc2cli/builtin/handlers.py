@@ -42,13 +42,13 @@ def handler(ns_handler, command_name, *args, **kwargs):
     return root.run(command_name, ns_handler, *args, **kwargs)
 
 
-def handler_instance(ns_handler, command_name, instance, *args, **kwargs):
+def handler_instance(ns_handler, instance, command_name, *args, **kwargs):
     """handler_instance is the default handler for commands defined as
     methods in a class.
 
     The handler will pass the given instance to the command.
     """
-    root = ns_handler.contex.root
+    root = ns_handler.context.root
     return root.run_instance(command_name, ns_handler, instance, *args, **kwargs)
 
 

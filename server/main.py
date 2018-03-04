@@ -42,12 +42,22 @@ PORT_NUMBER = 5001
 class CliServer(Flask):
 
     def __init__(self, module, **kwargs):
-        namespace = 'examples.work.main'
-        __import__(namespace)
-        h = Handler()
-        self.ns_handler = h.get_ns_handler_after_create_and_switch(namespace)
-        logger.display('Namespace initialized for {}...'.format(namespace))
         super(CliServer, self).__init__(module, **kwargs)
+        self.namespace = None
+
+    def set_new_namespace(self, namespace, module):
+        self.module = module if module else namespace
+        self.namespace = namespace
+        try:
+            __import__(self.module)
+            h = Handler()
+            self.ns_handler = h.get_ns_handler_after_create_and_switch(self.namespace)
+            logger.display('Namespace initialized for {}...'.format(self.namespace))
+            import sys
+            logger.display('sys.modules {}...'.format(sys.modules))
+            return True
+        except ModuleNotFoundError:
+            return False
 
 
 # -----------------------------------------------------------------------------
@@ -88,26 +98,44 @@ def app_before_first_request():
 
 @app.route('/cli/commands')
 def app_commands():
-    result = ''
-    for cmd in app.ns_handler.context.root.command_tree().keys():
-        result += '<p>{}'.format(cmd)
-    return result
+    if app.namespace:
+        result = ''
+        for cmd in app.ns_handler.context.root.command_tree().keys():
+            result += '<p>{}'.format(cmd)
+        return result
+    else:
+        return 'namespace: None\n'
 
 
-@app.route('/cli/namespace')
-def app_namespace():
-    return app.ns_handler.namespace
+@app.route('/cli/ns')
+def app_get_namespace():
+    return app.namespace
 
 
-@app.route('/cli')
-def app_cli():
-    command = request.args.get('command', None)
-    return execute_command(command)
+@app.route('/cli/ns/<namespace>')
+def app_set_namespace(namespace):
+    module = request.args.get('module', None)
+    if app.set_new_namespace(namespace, module):
+        return app.namespace
+    else:
+        return 'Module {} not found\n'.format(namespace)
+
+
+# @app.route('/cli')
+# def app_cli():
+#     if app.namespace:
+#         command = request.args.get('command', None)
+#         return execute_command(command)
+#     else:
+#         return 'namespace: None\n'
 
 
 @app.route('/cli/command/<command>')
 def app_cli_command(command):
-    return execute_command(command)
+    if app.namespace:
+        return execute_command(command)
+    else:
+        return 'namespace: None\n'
 
 
 # -----------------------------------------------------------------------------

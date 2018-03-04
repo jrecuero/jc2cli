@@ -195,13 +195,13 @@ class Tree(object):
         __import__(ns_module)
 
     @classmethod
-    def build_command_tree_from_ns_module(cls, ns_module, full_matched=True):
+    def build_command_tree_from_ns_module(cls, ns_module, matched=True):
         """build_command_tree_from_ns_module creates a new command tree
         dictionary looking for all commands matching ns_module.
         """
         root = Tree.root()
-        # full_matched only for commands under the exactly ns_module.
-        if full_matched:
+        # matched only for commands under the exactly ns_module.
+        if matched:
             traverse = {k: v for (k, v) in root.get_db().items() if ns_module == '.'.join(k.split('.')[:-1])}
         else:
             traverse = {k: v for (k, v) in root.get_db().items() if ns_module in k}
@@ -212,14 +212,14 @@ class Tree(object):
         return {v.command.name: v for (k, v) in traverse.items()}
 
     @classmethod
-    def start(cls, namespace, ns_module, full_matched=True, import_ns=False):
+    def start(cls, namespace, ns_module, matched=True, import_ns=False):
         """start creates a namespace with all commands for the given
         ns_module.
         """
         if import_ns:
             cls.import_ns_module(ns_module)
         cls.create(namespace)
-        command_tree = cls.build_command_tree_from_ns_module(ns_module, full_matched)
+        command_tree = cls.build_command_tree_from_ns_module(ns_module, matched)
         return cls.set_command_tree(namespace, command_tree)
 
     @classmethod
@@ -229,11 +229,11 @@ class Tree(object):
         cls.__COMMAND_TREE[namespace] = command_tree if command_tree else {}
 
     @classmethod
-    def extend(cls, namespace, ns_module, full_matched=True):
+    def extend(cls, namespace, ns_module, matched=True):
         """extend method extends all commands found under the ns_module to the
         given namespace.
         """
-        command_tree = cls.build_command_tree_from_ns_module(ns_module, full_matched)
+        command_tree = cls.build_command_tree_from_ns_module(ns_module, matched)
         return cls.extend_command_tree(namespace, command_tree)
 
     @classmethod
