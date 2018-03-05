@@ -12,6 +12,7 @@ __docformat__ = 'restructuredtext en'
 import json
 import jc2cli.tools.loggerator as loggerator
 from jc2cli.completer import CliCompleter
+from jc2cli.validator import CliValidator
 from jc2cli.error_handler import CliError, CliValidationError
 from prompt_toolkit import prompt
 from prompt_toolkit.history import FileHistory
@@ -304,7 +305,7 @@ class Base(object):
         """
         history = kwargs.get('history', FileHistory('history.txt'))
         completer = kwargs.get('completer', CliCompleter(self))
-        validator = kwargs.get('validator', None)
+        validator = kwargs.get('validator', CliValidator(self))
         style = kwargs.get('style', DocumentStyle)
 
         toolbar = kwargs.get('toolbar', 'Enter a valid command')

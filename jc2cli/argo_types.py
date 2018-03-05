@@ -160,9 +160,9 @@ class CliType(object):
         """
         result, message = self.validate(value)
         if not result:
-            raise_message = '\nValidation Error: argument: "{}" = {}'.format(self.argo.name, value)
+            raise_message = 'Validation Error: argument: "{}" = {}'.format(self.argo.name, value)
             raise_message += ': {}'.format(message)
-            raise CliValidationError(MODULE, raise_message)
+            raise CliValidationError(MODULE, raise_message, str_at_error=value)
         return self.get_the_value(value)
 
     def type(self):

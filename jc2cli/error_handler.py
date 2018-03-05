@@ -49,9 +49,11 @@ class CliException(Exception):
                                             _type,
                                             '<{}>'.format(exc_message) if exc_message else '',
                                             message))
-        super(CliException, self).__init__(message, *args, **kwargs)
+        super(CliException, self).__init__(message, *args)
         self.message = message
         self.type = _type
+        self.exc_message = exc_message
+        self.str_at_error = kwargs.get('str_at_error', None)
 
 
 class CliError(CliException):

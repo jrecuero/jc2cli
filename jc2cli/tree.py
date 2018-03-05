@@ -251,12 +251,22 @@ class Tree(object):
         return cls.command_tree().get(command_name, None)
 
     @classmethod
-    def run(cls, command_name, ns_handler, *args, **kwargs):
-        """run executes the callback from a command node.
+    def get_command(cls, command_name):
+        """get_command retrieved the command from a node.
         """
         node = cls.get_node(command_name)
-        if node and node.command:
-            command = node.command
+        if node:
+            return node.command
+        return None
+
+    @classmethod
+    def setup_args_for_run_command(cls, command_name, *args, **kwargs):
+        """setup_args_for_run_command configures arguments to be passed to the command
+        based in the command line input.
+        """
+        command = cls.get_command(command_name)
+        use_args = None
+        if command:
             line = kwargs.get('line', None)
             if command.rules is None:
                 raise CliError('Command {0} does not have syntax.'.format(command.name))
@@ -264,11 +274,27 @@ class Tree(object):
                 use_args = [line, ]
             else:
                 use_args = command.build_command_arguments_from_syntax(line)
+            command.run_with_args = use_args
+        return command, use_args
+
+    @classmethod
+    def run(cls, command_name, ns_handler, *args, **kwargs):
+        """run executes the callback from a command node.
+        """
+        result = None
+        command = cls.get_command(command_name)
+        if command:
+            if command.run_with_args is not None:
+                use_args = command.run_with_args
+            else:
+                _, use_args = cls.setup_args_for_run_command(command_name, *args, **kwargs)
             if use_args is not None:
                 if command.internal:
                     args = list(args)
                     args.append(ns_handler)
-                return command.cb(*args, *use_args)
+                result = command.cb(*args, *use_args)
+                command.run_with_args = None
+        return result
 
     @classmethod
     def run_none(cls, command_name, ns_handler, *args, **kwargs):

@@ -124,12 +124,12 @@ def do_speed(value):
     return True
 
 
-@command('UI app default')
-@argo('app', Str(help='Enter app name'), "none")
-@argo('default', Str(help='Enter default value'), "none")
-def do_ui(app, default):
-    logger.display('UI: running in main module with "{0}" and "{1}"'.format(app, default))
-    return 'UI: running in main module with "{0}" and "{1}"'.format(app, default)
+@command('UI speed default')
+@argo('speed', Int(help='Enter speed value'), None)
+@argo('default', Str(help='Enter default value'), None)
+def do_ui(speed, default):
+    logger.display('UI: running in main module with "{0}" and "{1}"'.format(speed, default))
+    return 'UI: running in main module with "{0}" and "{1}"'.format(speed, default)
 
 
 @command('exit')

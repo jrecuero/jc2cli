@@ -51,6 +51,7 @@ class Command(object):
         self.rules = None
         self.internal = False
         self.arguments = Arguments()
+        self.run_with_args = None
 
     def __str__(self):
         return '{0}:{1}'.format(self.__class__.__name__, self.name)
