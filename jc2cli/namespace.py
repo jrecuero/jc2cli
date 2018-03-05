@@ -77,7 +77,7 @@ class NameSpace(object):
             self.context.root.create(self.namespace)
         logger.trace('NameSpace {0} with {1}'.format(self.namespace, self.commands.keys() if self.commands else None))
         self.cli_class = kwargs.get('cli_class', Base)
-        self.cli = self.create_cli()
+        self.cli = self.create_cli(**kwargs)
 
     def _get_handler(self, **kwargs):
         class_cmd_obj = kwargs.get('class_cmd_obj', None)

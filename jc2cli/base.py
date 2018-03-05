@@ -61,7 +61,7 @@ class Base(object):
     """Base class is the cli base class.
     """
 
-    def __init__(self, ns_handler):
+    def __init__(self, ns_handler, **kwargs):
         """__init__ method is the Base class constructor.
         """
         self.ns_handler = ns_handler
