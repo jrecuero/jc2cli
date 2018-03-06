@@ -56,6 +56,7 @@ class Tree(object):
     __ACTIVE_CMD_NS = None
     # __MODE_TREE = {}
     # __ACTIVE_MODE_NS = None
+    command_to_run = None
 
     class _Tree(object):
 
@@ -294,6 +295,7 @@ class Tree(object):
                     args.append(ns_handler)
                 result = command.cb(*args, *use_args)
                 command.run_with_args = None
+                cls.command_to_run = None
         return result
 
     @classmethod

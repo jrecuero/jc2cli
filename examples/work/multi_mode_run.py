@@ -3,16 +3,14 @@ from jc2cli.namespace import Handler
 from jc2cli.builtin.handlers import handler_mode, handler_none
 
 
-def right_prompt():
-    right_prompt.counter = getattr(right_prompt, 'counter', 0)
-    right_prompt.counter += 1
-    return ' <{}>'.format(right_prompt.counter)
-    # if right_prompt.counter % 2 == 0:
-    #     return ' <{}>'.format(right_prompt.counter)
-    # elif right_prompt.counter % 3 == 0:
-    #     return '---\n***\n <{}>'.format(right_prompt.counter)
-    # else:
-    #     return '...\n <{}>'.format(right_prompt.counter)
+def right_prompt(cli):
+    # right_prompt.counter = getattr(right_prompt, 'counter', 0)
+    # right_prompt.counter += 1
+    # return ' <{}>'.format(right_prompt.counter)
+    from jc2cli.tree import Tree
+    if Tree.command_to_run:
+        return Tree.command_to_run.syntax
+    return ""
 
 
 class RunCli(object):
@@ -30,7 +28,9 @@ class RunCli(object):
         handler.create_namespace('main',
                                  ns_module='examples.work.main',
                                  handler=partial(handler_mode, handler.get_ns_handler('cli')))
-        handler.switch_and_run_cli_for_namespace('main', prompt='multi-run > ', rprompt=right_prompt)
+        # handler.switch_and_run_cli_for_namespace('main', prompt='multi-run > ', rprompt=right_prompt)
+        # handler.switch_and_run_cli_for_namespace('main', prompt='multi-run > ')
+        handler.switch_and_run_cli_for_namespace('main', prompt='multi-run > ', rprompt='')
 
 
 if __name__ == '__main__':

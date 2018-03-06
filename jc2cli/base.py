@@ -223,7 +223,12 @@ class Base(object):
         Returns:
             :any:`list` : list with data to be displayed in the prompt.
         """
-        return [(Token.Prompt, '{}'.format(self.prompt_str)), ]
+        return [(Token.Prompt, '{}'.format(self.get_prompt(cli))), ]
+
+    def get_prompt(self, cli):
+        """get_prompt returns the value for the command line prompt.
+        """
+        return self.prompt_str if isinstance(self.prompt_str, str) else self.prompt_str(cli)
 
     def get_rprompt_tokens(self, cli):
         """Returns tokens for command line right prompt.
@@ -234,7 +239,12 @@ class Base(object):
         Returns:
             :any:`list` : list with data to be displayed in the right prompt..
         """
-        return [(Token.RPrompt, '{}'.format(self.rprompt_str)), ]
+        return [(Token.RPrompt, '{}'.format(self.get_rprompt(cli))), ]
+
+    def get_rprompt(self, cli):
+        """get_rprompt returns the value for the command line right prompt.
+        """
+        return self.rprompt_str if isinstance(self.rprompt_str, str) else self.rprompt_str(cli)
 
     def empty_line(self):
         """empty_line method handles an empty line entered by the user in the
@@ -303,20 +313,21 @@ class Base(object):
         Returns:
             str : String with the input entered by the user.
         """
-        history = kwargs.get('history', FileHistory('history.txt'))
-        completer = kwargs.get('completer', CliCompleter(self))
-        validator = kwargs.get('validator', CliValidator(self))
-        style = kwargs.get('style', DocumentStyle)
-
         toolbar = kwargs.get('toolbar', 'Enter a valid command')
         self.toolbar_str = toolbar if isinstance(toolbar, str) else toolbar()
+        self.prompt_str = kwargs.get('prompt', self.prompt_str)
+        _rprompt = kwargs.get('rprompt', None)
+        if _rprompt is not None:
+            self.rprompt_str = _rprompt
+            use_default = False
+        else:
+            self.rprompt_str = ''
+            use_default = True
 
-        _prompt = kwargs.get('prompt', self.prompt_str)
-        self.prompt_str = _prompt if isinstance(_prompt, str) else _prompt()
-
-        rprompt = kwargs.get('rprompt', None)
-        if rprompt is not None:
-            self.rprompt_str = rprompt if isinstance(rprompt, str) else rprompt()
+        history = kwargs.get('history', FileHistory('history.txt'))
+        completer = kwargs.get('completer', CliCompleter(self, rprompt=use_default))
+        validator = kwargs.get('validator', CliValidator(self))
+        style = kwargs.get('style', DocumentStyle)
 
         user_input = prompt(history=history,
                             auto_suggest=AutoSuggestFromHistory(),

@@ -9,6 +9,7 @@ __docformat__ = 'restructuredtext en'
 #             |_|
 # -----------------------------------------------------------------------------
 #
+from jc2cli.tree import Tree
 import jc2cli.tools.loggerator as loggerator
 from prompt_toolkit.completion import Completer, Completion
 
@@ -52,8 +53,9 @@ class CliCompleter(Completer):
 
     def _update_rprompt(self, messages):
         if self._refresh_rprompt:
-            self._cli.rprompt_str = " | ".join(messages)
-        pass
+            # self._cli.rprompt_str = " | ".join(messages)
+            # pass
+            self._cli.rprompt_str = Tree.command_to_run.syntax
 
     def get_completions(self, document, complete_event):
         matches = None
@@ -74,6 +76,7 @@ class CliCompleter(Completer):
                 return
             command = node.command
             if command is not None:
+                Tree.command_to_run = command
                 root = command.syntax_root
                 cli_args = command.get_cli_args(" ".join(line_as_list[1:]))
                 node_path = None
