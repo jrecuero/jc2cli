@@ -66,11 +66,11 @@ def tenant(tname):
     return True
 
 
-@command('INTERFACE [eth | l3out]?')
-@argo('eth', Str(), 'none')
+@command('INTERFACE [ETH | l3out]?')
+@argo('ETH', Str(), 'none')
 @argo('l3out', Str(), 'none')
 def do_interface(eth, l3out):
-    logger.display('INTERFACE: running in main module with eth: "{0}" and l3out: "{1}"'.format(eth, l3out))
+    logger.display('INTERFACE: running in main module with ETH: "{0}" and l3out: "{1}"'.format(eth, l3out))
     return True
 
 
@@ -82,12 +82,12 @@ def do_add_tenant(tname):
     return True
 
 
-@command('SPINE [<eth> | <l3out> ]! name')
-@argo('eth', Constant(), 'none')
-@argo('l3out', Constant(), 'none')
+@command('SPINE [<ETH> | <L3OUT> ]! name')
+@argo('ETH', Constant(), 'none')
+@argo('L3OUT', Constant(), 'none')
 @argo('name', Str(), None)
 def do_spine(eth, l3out, name):
-    logger.display('SPINE: running in main module with eth: "{}" and l3out: "{}" with {}'.format(eth, l3out, name))
+    logger.display('SPINE: running in main module with ETH: "{}" and L3OUT: "{}" with {}'.format(eth, l3out, name))
     return True
 
 
@@ -108,6 +108,13 @@ def do_leaf(eth, l3out, leafname, primary, secondary, device):
 @argo('ptype', Enum(['app', 'l3', 'l2']), 'app')
 def do_profile(ptype):
     logger.display('PROFILE type: {}'.format(ptype))
+    return True
+
+
+@command('SHOW-INFO command-name')
+@argo('command-name', Str(), None)
+def do_show_info(command_name):
+    logger.display('SHOW-INFO for command: {}'.format(command_name))
     return True
 
 
