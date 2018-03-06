@@ -1,4 +1,4 @@
-from jc2cli.decorators import command, mode, argo
+from jc2cli.decorators import command, mode, argo, help
 from jc2cli.argo_types import CliType
 from jc2cli.builtin.argos import Str, Int, Line, Constant, Enum, Range, Dicta
 import jc2cli.tools.loggerator as loggerator
@@ -92,12 +92,13 @@ def do_spine(eth, l3out, name):
 
 
 @command('LEAF [<eth> | l3out]! leafname [primary | secondary]? device')
-@argo('eth', Constant(), 'none')
-@argo('l3out', Str(), 'none')
-@argo('leafname', Str(), None)
-@argo('primary', Str(), 'none')
-@argo('secondary', Str(), 'none')
-@argo('device', Str(), None)
+@help('Retreive leaf information from the node.')
+@argo('eth', Constant(help='ethernet device'), 'none')
+@argo('l3out', Str(help='L3Out device name'), 'none')
+@argo('leafname', Str(help='Name of the leaf there device is being deployed'), None)
+@argo('primary', Str(help='Primary interface'), 'none')
+@argo('secondary', Str(help='Secondary interface'), 'none')
+@argo('device', Str(help='Device name'), None)
 def do_leaf(eth, l3out, leafname, primary, secondary, device):
     logger.display('LEAF: {} | {} {} {} | {} {}'.format(eth, l3out, leafname, primary, secondary, device))
     return True

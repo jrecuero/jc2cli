@@ -123,11 +123,25 @@ def do_exit():
     return False
 
 
-@command('syntax')
+@command('syntax [cmd]?')
+@argo('cmd', Str(), 'none')
 @help('Display syntax for all commands.')
-def do_syntax():
+def do_syntax(cmd):
     for node_instance in Tree.command_tree().values():
-        logger.display(node_instance.command.syntax)
+        if 'none' == cmd:
+            logger.display(node_instance.command.syntax)
+        elif node_instance.command.name == cmd:
+            command = node_instance.command
+            logger.display('\n{}'.format(command.name))
+            logger.display('{}\n'.format('-' * len(command.name)))
+            logger.display('{}\n\n'.format(command.help))
+            logger.display('Syntax')
+            logger.display('------\n')
+            logger.display('{}\n\n'.format(command.syntax))
+            logger.display('Syntax description')
+            logger.display('------------------\n')
+            for arg in command.arguments.traverse():
+                logger.display('{} ({}) : {}\n'.format(arg.name, arg.type.__class__.__name__, arg.completer.help_str))
     return True
 
 
@@ -146,10 +160,11 @@ class BuiltIns(object):
         def do_exit(self):
             return do_exit()
 
-        @command('syntax')
+        @command('syntax [cmd]?')
         @help('Display syntax for all commands.')
-        def do_syntax(self):
-            return do_syntax()
+        @argo('cmd', Str(), 'none')
+        def do_syntax(self, cmd):
+            return do_syntax(cmd)
 
         @command('help')
         @help('Display this help information.')
