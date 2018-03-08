@@ -13,6 +13,7 @@ __docformat__ = 'restructuredtext en'
 from jc2cli.decorators import command, argo
 from jc2cli.builtin.argos import Str, Int, Enum
 import jc2cli.tools.loggerator as loggerator
+from examples.assembler.machine import Machine
 
 
 # -----------------------------------------------------------------------------
@@ -60,11 +61,20 @@ class Register(Enum):
 #
 # -----------------------------------------------------------------------------
 #
+def get_cpu():
+    get_cpu.machine = getattr(get_cpu, 'machine', None)
+    if not get_cpu.machine:
+        get_cpu.machine = Machine()
+    return get_cpu.machine
+
+
 @command('DEFM label mem')
 @argo('label', Str(help='Label for memory address'), None)
 @argo('mem', Str(help='Memory address'), None)
 def do_def_memory(label, mem):
     logger.display('define label {} for memory address {}'.format(label, mem))
+    cpu = get_cpu()
+    cpu.defm(label, mem)
     return True
 
 
@@ -74,6 +84,8 @@ def do_def_memory(label, mem):
 @argo('size', Size(), None)
 def do_def_cte(label, cte, size):
     logger.display('define label {} for constant value {} [{} bytes]'.format(label, cte, size))
+    cpu = get_cpu()
+    cpu.defc(label, cte)
     return True
 
 
@@ -83,6 +95,8 @@ def do_def_cte(label, cte, size):
 @argo('size', Size(), None)
 def do_load_mem_to_mem(src, dst, size):
     logger.display('load memory from {} to {} [{} bytes]'.format(src, dst, size))
+    cpu = get_cpu()
+    cpu.ldm(src, dst, size)
     return True
 
 
@@ -92,6 +106,8 @@ def do_load_mem_to_mem(src, dst, size):
 @argo('size', Size(), None)
 def do_load_cte_to_mem(cte, dst, size):
     logger.display('load constant {} to {} [{} size]'.format(cte, dst, size))
+    cpu = get_cpu()
+    cpu.ldc(cte, dst, size)
     return True
 
 
@@ -100,14 +116,18 @@ def do_load_cte_to_mem(cte, dst, size):
 @argo('reg', Register(), None)
 def do_load_mem_to_reg(src, reg):
     logger.display('load from memory {} to register {}'.format(src, reg))
+    cpu = get_cpu()
+    cpu.ldmr(src, reg)
     return True
 
 
 @command('LDRM reg src')
 @argo('reg', Register(), None)
 @argo('src', Str(help='Destination memory address'), None)
-def do_load_reg_to_mem(reg, src, ):
+def do_load_reg_to_mem(reg, src):
     logger.display('load from register {} to memory address {}'.format(reg, src))
+    cpu = get_cpu()
+    cpu.ldrm(reg, src)
     return True
 
 
@@ -116,6 +136,8 @@ def do_load_reg_to_mem(reg, src, ):
 @argo('reg', Register(), None)
 def do_load_cte_to_reg(cte, reg):
     logger.display('load from memory {} to register {}'.format(cte, reg))
+    cpu = get_cpu()
+    cpu.ldcr(cte, reg)
     return True
 
 
@@ -125,6 +147,8 @@ def do_load_cte_to_reg(cte, reg):
 @argo('size', Size(), None)
 def do_add_mem_to_mem(src, dst, size):
     logger.display('Add memory {} to {} [{} bytes]'.format(src, dst, size))
+    cpu = get_cpu()
+    cpu.addm(src, dst, size)
     return True
 
 
@@ -134,6 +158,8 @@ def do_add_mem_to_mem(src, dst, size):
 @argo('size', Size(), None)
 def do_add_cte_to_mem(cte, dst, size):
     logger.display('Add constant {} to {} [{} bytes]'.format(cte, dst, size))
+    cpu = get_cpu()
+    cpu.addc(cte, dst, size)
     return True
 
 
@@ -142,6 +168,19 @@ def do_add_cte_to_mem(cte, dst, size):
 @argo('bytes', Int(help='Number of bytes'), 0)
 def do_disp_memory(mem, bytes):
     logger.display('display {} bytes at memory address {}'.format(bytes, mem))
+    cpu = get_cpu()
+    for data in cpu.disp(mem, bytes):
+        logger.display('{}'.format(data))
+    return True
+
+
+@command('REGS [reg]?')
+@argo('reg', Str(help='Register to display'), 0)
+def do_registers(reg):
+    logger.display('display registers {}'.format(reg))
+    cpu = get_cpu()
+    for r, data in cpu.regs(reg):
+        logger.display('{}: {}'.format(r, data))
     return True
 
 
