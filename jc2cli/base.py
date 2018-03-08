@@ -75,9 +75,7 @@ class Base(object):
         self.rprompt_str = ''
         self.__recording = False
         self.__record_data = []
-        self.__style = style_from_dict({Token.PrePrompt: '#44ff44 underline',
-                                        Token.PostPrompt: '#ff0066 italic',
-                                        })
+        self.__style = style_from_dict(DocumentStyle.styles)
 
     @property
     def commands(self):
