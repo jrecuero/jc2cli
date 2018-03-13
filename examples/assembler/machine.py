@@ -245,6 +245,46 @@ class Machine(object):
         self.memory[dst_addr] += src_data
         logger.info('addc mem[{}] = {} /{}'.format(dst_addr, self.memory[dst_addr], size))
 
+    def addmr(self, src, reg, size):
+        src_addr, dst_reg = self.lang.load_mem_to_reg(src, reg)
+        self.registers[dst_reg] += self.memory[src_addr]
+        logger.info('addmr {} = {}'.format(dst_reg, self.memory[src_addr]))
+
+    def addrm(self, reg, src):
+        dst_addr, src_reg = self.lang.load_mem_to_reg(src, reg)
+        self.memory[dst_addr] += self.registers[src_reg]
+        logger.info('addmr mem[{}] = {}'.format(dst_addr, self.registers[src_reg]))
+
+    def addcr(self, src, reg):
+        src_data, dst_reg = self.lang.load_cte_to_reg(src, reg)
+        self.registers[dst_reg] += src_data
+        logger.info('addcr {} = {}'.format(dst_reg, src_data))
+
+    def subm(self, src, dst, size):
+        src_addr, dst_addr = self.lang.load_mem_to_mem(src, dst)
+        self.memory[dst_addr] -= self.memory[src_addr]
+        logger.info('subm mem[{}] = {} /{}'.format(dst_addr, self.memory[dst_addr], size))
+
+    def subc(self, src, dst, size):
+        src_data, dst_addr = self.lang.load_cte_to_mem(src, dst)
+        self.memory[dst_addr] -= src_data
+        logger.info('subc mem[{}] = {} /{}'.format(dst_addr, self.memory[dst_addr], size))
+
+    def submr(self, src, reg, size):
+        src_addr, dst_reg = self.lang.load_mem_to_reg(src, reg)
+        self.registers[dst_reg] -= self.memory[src_addr]
+        logger.info('submr {} = {}'.format(dst_reg, self.memory[src_addr]))
+
+    def subrm(self, reg, src):
+        dst_addr, src_reg = self.lang.load_mem_to_reg(src, reg)
+        self.memory[dst_addr] -= self.registers[src_reg]
+        logger.info('submr mem[{}] = {}'.format(dst_addr, self.registers[src_reg]))
+
+    def subcr(self, src, reg):
+        src_data, dst_reg = self.lang.load_cte_to_reg(src, reg)
+        self.registers[dst_reg] -= src_data
+        logger.info('subcr {} = {}'.format(dst_reg, src_data))
+
     def defm(self, label, addr):
         self.lang.add_mem(label, addr)
         logger.info('defm {} = {}'.format(label, addr))

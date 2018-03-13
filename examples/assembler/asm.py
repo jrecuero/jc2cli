@@ -163,6 +163,88 @@ def do_add_cte_to_mem(cte, dst, size):
     return True
 
 
+@command('ADDMR src reg')
+@argo('src', Str(help='Source memory address'), None)
+@argo('reg', Register(), None)
+def do_add_mem_to_reg(src, reg):
+    logger.display('Add from memory {} to register {}'.format(src, reg))
+    cpu = get_cpu()
+    cpu.addmr(src, reg)
+    return True
+
+
+@command('ADDRM reg src')
+@argo('reg', Register(), None)
+@argo('src', Str(help='Destination memory address'), None)
+def do_add_reg_to_mem(reg, src):
+    logger.display('Add from register {} to memory address {}'.format(reg, src))
+    cpu = get_cpu()
+    cpu.addrm(reg, src)
+    return True
+
+
+@command('ADDCR cte reg')
+@argo('cte', Str(help='Constant value'), None)
+@argo('reg', Register(), None)
+def do_add_cte_to_reg(cte, reg):
+    logger.display('Add from memory {} to register {}'.format(cte, reg))
+    cpu = get_cpu()
+    cpu.addcr(cte, reg)
+    return True
+
+
+@command('SUBM src dst size')
+@argo('src', Str(help='First memory address'), None)
+@argo('dst', Str(help='Second and destination memory address'), None)
+@argo('size', Size(), None)
+def do_sub_mem_to_mem(src, dst, size):
+    logger.display('Subtract memory {} to {} [{} bytes]'.format(src, dst, size))
+    cpu = get_cpu()
+    cpu.subm(src, dst, size)
+    return True
+
+
+@command('SUBC cte dst size')
+@argo('cte', Str(help='Constant value'), None)
+@argo('dst', Str(help='Second and destination memory address'), None)
+@argo('size', Size(), None)
+def do_sub_cte_to_mem(cte, dst, size):
+    logger.display('Subtract constant {} to {} [{} bytes]'.format(cte, dst, size))
+    cpu = get_cpu()
+    cpu.subc(cte, dst, size)
+    return True
+
+
+@command('SUBMR src reg')
+@argo('src', Str(help='Source memory address'), None)
+@argo('reg', Register(), None)
+def do_sub_mem_to_reg(src, reg):
+    logger.display('Subtract from memory {} to register {}'.format(src, reg))
+    cpu = get_cpu()
+    cpu.submr(src, reg)
+    return True
+
+
+@command('SUBRM reg src')
+@argo('reg', Register(), None)
+@argo('src', Str(help='Destination memory address'), None)
+def do_sub_reg_to_mem(reg, src):
+    logger.display('Subtract from register {} to memory address {}'.format(reg, src))
+    cpu = get_cpu()
+    cpu.subrm(reg, src)
+    return True
+
+
+@command('SUBCR cte reg')
+@argo('cte', Str(help='Constant value'), None)
+@argo('reg', Register(), None)
+def do_sub_cte_to_reg(cte, reg):
+    logger.display('Subtract from memory {} to register {}'.format(cte, reg))
+    cpu = get_cpu()
+    cpu.subcr(cte, reg)
+    return True
+
+
 @command('DISP mem [bytes]?')
 @argo('mem', Str(help='Memory address'), None)
 @argo('bytes', Int(help='Number of bytes'), 0)
