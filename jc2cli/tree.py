@@ -187,13 +187,13 @@ class Tree(object):
             return False
 
     @classmethod
-    def import_ns_module(cls, ns_module):
-        """import_ns_module imports all commands from the ns_module.
+    def import_ns_module(cls, module):
+        """import_ns_module imports all commands from the module.
 
         Commands will be loaded in the Tree.roo() dictionary, they will be
         available to be loaded in the command tree.
         """
-        __import__(ns_module)
+        __import__(module)
 
     @classmethod
     def build_command_tree_from_ns_module(cls, ns_module, matched=True):
@@ -213,12 +213,12 @@ class Tree(object):
         return {v.command.name: v for (k, v) in traverse.items()}
 
     @classmethod
-    def start(cls, namespace, ns_module, matched=True, import_ns=False):
+    def start(cls, namespace, ns_module, matched=True, import_ns=False, module=None):
         """start creates a namespace with all commands for the given
         ns_module.
         """
         if import_ns:
-            cls.import_ns_module(ns_module)
+            cls.import_ns_module(module if module else ns_module)
         cls.create(namespace)
         command_tree = cls.build_command_tree_from_ns_module(ns_module, matched)
         return cls.set_command_tree(namespace, command_tree)

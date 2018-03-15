@@ -78,4 +78,5 @@ def handler_root(root_handler, ns_handler, command_name, *args, **kwargs):
     if result and root.get_node(command_name).is_mode():
         mode_ns_handler = root_handler.get_ns_handler(root.get_node(command_name).command.ns_mode)
         mode_ns_handler.switch_and_run(*args, **kwargs)
+        ns_handler.switch_to()
     return result

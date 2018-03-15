@@ -96,7 +96,7 @@ class NameSpace(object):
     def start_commands(self):
         """start_commands loads namespace commands as available.
         """
-        self.commands = self.context.root.start(self.namespace, self.ns_module, self.matched)
+        self.commands = self.context.root.start(self.namespace, self.ns_module, self.matched, module=self.module)
         return self.commands
 
     def create_cli(self, *args, **kwargs):
