@@ -57,7 +57,7 @@ def _mode(f, wrapper, syntax, ns_mode, namespace, internal=False):
     logger.info('mode : syntax : {0} : namespace {1}'.format(syntax, ns_mode))
     node = Tree.fnode(f, wrapper, mode=True)
     node.command.syntax = syntax
-    node.command.namespace = ns_mode
+    node.command.ns_mode = ns_mode
     node.command.internal = internal
     if namespace:
         Tree().rename_node(node.name, '{0}.{1}'.format(namespace, f.__qualname__))
@@ -96,7 +96,7 @@ def icommand(syntax, namespace=None):
     return command_wrapper
 
 
-def mode(syntax, ns_mode, namespace=None):
+def mode(syntax, ns_mode=None, namespace=None):
     """mode decorator creates a new mode.
     """
 
@@ -111,7 +111,7 @@ def mode(syntax, ns_mode, namespace=None):
     return mode_wrapper
 
 
-def imode(syntax, ns_mode, namespace=None):
+def imode(syntax, ns_mode=None, namespace=None):
     """imode decorator creates a new internal mode.
 
     Internal mode receives one extra parameter, namespace handler.

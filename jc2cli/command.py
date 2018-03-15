@@ -49,6 +49,7 @@ class Command(object):
         self.name = None
         self.help = None
         self.rules = None
+        self.ns_mode = None
         self.internal = False
         self.arguments = Arguments()
         self.run_with_args = None

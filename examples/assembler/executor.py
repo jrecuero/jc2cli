@@ -10,7 +10,7 @@ __docformat__ = 'restructuredtext en'
 #             |_|
 # -----------------------------------------------------------------------------
 #
-from jc2cli.decorators import command, argo
+from jc2cli.decorators import command, mode, argo
 from jc2cli.builtin.argos import Str
 import jc2cli.tools.loggerator as loggerator
 
@@ -41,6 +41,13 @@ logger = loggerator.getLoggerator(MODULE)
 @argo('name', Str(help='Name of the program to load'), None)
 def do_load_program(name):
     logger.display('load program {}'.format(name))
+    return True
+
+
+@mode('asm', 'asm')
+# @mode('asm')
+def do_asm():
+    logger.display('asm engine machine')
     return True
 
 

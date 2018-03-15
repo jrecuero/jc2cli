@@ -1,5 +1,10 @@
 __docformat__ = 'restructuredtext en'
 
+# import sys
+# import os
+# sys.path.append(os.path.join('/Users/jorecuer', 'Repository/winpdb-1.4.8'))
+# import rpdb2
+# rpdb2.start_embedded_debugger("jrecuero")
 
 # -----------------------------------------------------------------------------
 #  _                            _
@@ -10,6 +15,9 @@ __docformat__ = 'restructuredtext en'
 #             |_|
 # -----------------------------------------------------------------------------
 #
+from functools import partial
+# from jc2cli.builtin.handlers import handler_mode
+from jc2cli.builtin.handlers import handler_root
 from jc2cli.namespace import Handler
 from examples.assembler.asm import get_cpu
 from examples.assembler.executor import Executor
@@ -57,24 +65,33 @@ def right_prompt(cli):
 class RunAsmCli(object):
 
     def __init__(self):
-        # module = 'examples.assembler.asm'
-        # namespace = module
-        __import__('examples.assembler.asm')
-        __import__('examples.assembler.executor')
-        self.namespace = 'examples.assembler'
+        self.modes = {'asm': {'module': 'examples.assembler.asm',
+                              'namespace': 'asm',
+                              'ns_handler': None,
+                              'cli': None,
+                              'mode': None, },
+                      'executor': {'module': 'examples.assembler.executor',
+                                   'namespace': 'executor',
+                                   'ns_handler': None,
+                                   'cli': None,
+                                   'mode': 'asm', }, }
+        setup_modes = ['asm', 'executor']
         self.handler = Handler()
-
-        # import sys
-        # import os
-        # sys.path.append(os.path.join('/Users/jorecuer', 'Repository/winpdb-1.4.8'))
-        # import rpdb2
-        # rpdb2.start_embedded_debugger("jrecuero")
-
-        self.handler.create_namespace(self.namespace, matched=False)
-        self.cli = self.handler.get_ns_handler(self.namespace).cli
+        for mode_name in setup_modes:
+            mode = self.modes[mode_name]
+            # __import__(mode['module'])
+            # cli_handler = partial(handler_mode, self.modes[mode['mode']]['ns_handler'] if mode['mode'] else None)
+            cli_handler = partial(handler_root, self.handler)
+            self.handler.create_namespace(mode['namespace'],
+                                          module=mode['module'],
+                                          ns_module=mode['module'],
+                                          handler=cli_handler,
+                                          import_ns=True)
+            mode['ns_handler'] = self.handler.get_ns_handler(mode['namespace'])
+            mode['cli'] = self.handler.get_ns_handler(mode['namespace']).cli
 
     def run(self):
-        self.handler.switch_and_run_cli_for_namespace(self.namespace,
+        self.handler.switch_and_run_cli_for_namespace(self.modes['executor']['namespace'],
                                                       rprompt=right_prompt,
                                                       pre_prompt='\nASM ASSEMBLER',
                                                       post_prompt='CPU READY...')
@@ -91,5 +108,5 @@ class RunAsmCli(object):
 #
 if __name__ == '__main__':
     runner = RunAsmCli()
-    executor = Executor(runner.cli)
+    executor = Executor(runner.modes['executor']['cli'])
     runner.run()
