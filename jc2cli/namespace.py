@@ -129,11 +129,11 @@ class NameSpace(object):
         logger.trace('NameSpace {0} with {1}'.format(self.namespace, self.commands.keys() if self.commands else None))
         logger.trace('cli commands {0}'.format(self.cli.commands.keys() if self.cli.commands else None))
 
-    def extend(self, ns_extended):
+    def extend(self, ns_extended, matched=None):
         """extend extends the namespace with the commands from a new
         namespace module.
         """
-        commands = self.context.root.extend(self.namespace, ns_extended, self.matched)
+        commands = self.context.root.extend(self.namespace, ns_extended, matched if matched else self.matched)
         self.update_commands(commands)
         return True
 
@@ -157,9 +157,9 @@ class Handler(object):
         new_ns_handler = NameSpace(namespace, self.new_ns_context(), start=False, **kwargs)
         self.ns_handlers[namespace] = new_ns_handler
         if kwargs.get('is_class_cmd', False) or kwargs.get('class_cmd_obj', False):
-            self.extend_namespace(namespace, class_builtins_namespace())
+            self.extend_namespace(namespace, class_builtins_namespace(), matched=True)
         else:
-            self.extend_namespace(namespace, builtins_namespace())
+            self.extend_namespace(namespace, builtins_namespace(), matched=True)
         ns_module = kwargs.get('ns_module', namespace)
         self.extend_namespace(namespace, ns_module)
         return new_ns_handler
@@ -177,12 +177,12 @@ class Handler(object):
             return self.ns_handlers[namespace]
         return None
 
-    def extend_namespace(self, namespace, ns_extended):
+    def extend_namespace(self, namespace, ns_extended, matched=None):
         """extend_namespace extends the namespace handler with the commands
         from a new namespace module.
         """
         if namespace in self.ns_handlers:
-            return self.get_ns_handler(namespace).extend(ns_extended)
+            return self.get_ns_handler(namespace).extend(ns_extended, matched)
         return False
 
     def switch_to_namespace(self, namespace):

@@ -10,9 +10,8 @@ __docformat__ = 'restructuredtext en'
 #             |_|
 # -----------------------------------------------------------------------------
 #
-from jc2cli.namespace import Handler
-from examples.assembler.asm import get_cpu
-from examples.assembler.executor import Executor
+from jc2cli.decorators import command, argo
+from jc2cli.builtin.argos import Str
 import jc2cli.tools.loggerator as loggerator
 
 
@@ -25,7 +24,7 @@ import jc2cli.tools.loggerator as loggerator
 #
 # -----------------------------------------------------------------------------
 #
-MODULE = 'EX.ASM.run_asm'
+MODULE = 'EX.ASM.executor'
 logger = loggerator.getLoggerator(MODULE)
 
 
@@ -38,11 +37,11 @@ logger = loggerator.getLoggerator(MODULE)
 #
 # -----------------------------------------------------------------------------
 #
-def right_prompt(cli):
-    st = ""
-    for r, d in get_cpu().regs():
-        st += ('{}: {}\n'.format(r, d))
-    return st
+@command('load-program name')
+@argo('name', Str(help='Name of the program to load'), None)
+def do_load_program(name):
+    logger.display('load program {}'.format(name))
+    return True
 
 
 # -----------------------------------------------------------------------------
@@ -54,30 +53,23 @@ def right_prompt(cli):
 #
 # -----------------------------------------------------------------------------
 #
-class RunAsmCli(object):
+class Executor(object):
 
-    def __init__(self):
-        # module = 'examples.assembler.asm'
-        # namespace = module
-        __import__('examples.assembler.asm')
-        __import__('examples.assembler.executor')
-        self.namespace = 'examples.assembler'
-        self.handler = Handler()
+    def __init__(self, cli, **kwargs):
+        self.cli = cli
+        self.panel = []
+        self.pc = None
+        self.labels = {}
+        self.cmd_to_run = None
 
-        # import sys
-        # import os
-        # sys.path.append(os.path.join('/Users/jorecuer', 'Repository/winpdb-1.4.8'))
-        # import rpdb2
-        # rpdb2.start_embedded_debugger("jrecuero")
+    def load_program(self, commands):
+        pass
 
-        self.handler.create_namespace(self.namespace, matched=False)
-        self.cli = self.handler.get_ns_handler(self.namespace).cli
+    def execute_pc(self, pc):
+        pass
 
-    def run(self):
-        self.handler.switch_and_run_cli_for_namespace(self.namespace,
-                                                      rprompt=right_prompt,
-                                                      pre_prompt='\nASM ASSEMBLER',
-                                                      post_prompt='CPU READY...')
+    def execute_from(self, initial_pc):
+        pass
 
 
 # -----------------------------------------------------------------------------
@@ -90,6 +82,4 @@ class RunAsmCli(object):
 # -----------------------------------------------------------------------------
 #
 if __name__ == '__main__':
-    runner = RunAsmCli()
-    executor = Executor(runner.cli)
-    runner.run()
+    pass
