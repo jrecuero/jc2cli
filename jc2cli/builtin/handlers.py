@@ -73,6 +73,9 @@ def handler_mode(child_ns_handler, ns_handler, command_name, *args, **kwargs):
 
 
 def handler_root(root_handler, ns_handler, command_name, *args, **kwargs):
+    """handler_root is the default hadnler that allows to get inside inner
+    modes defined in the @mode and @imode.
+    """
     root = ns_handler.context.root
     result = root.run(command_name, ns_handler, *args, **kwargs)
     if result and root.get_node(command_name).is_mode():

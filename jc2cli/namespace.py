@@ -62,6 +62,8 @@ class NameSpace(object):
     """
 
     def __init__(self, namespace, context, **kwargs):
+        """__init__ initializes NameSpace instance.
+        """
         self.namespace = namespace
         self.context = context
         self.ns_module = kwargs.get('ns_module', namespace)
@@ -80,6 +82,8 @@ class NameSpace(object):
         self.cli = self.create_cli(**kwargs)
 
     def _get_handler(self, **kwargs):
+        """_get_handler gets the handler to be used for cli commands.
+        """
         class_cmd_obj = kwargs.get('class_cmd_obj', None)
         if kwargs.get('is_class_cmd', False):
             default_handler = handler_none
@@ -143,6 +147,8 @@ class Handler(object):
     """
 
     def __init__(self):
+        """__init__ initializes Handler instance.
+        """
         self.ns_handlers = {}
         self.context = Context(Tree)
 
@@ -153,6 +159,16 @@ class Handler(object):
 
     def create_namespace(self, namespace, **kwargs):
         """create_namespace creates a new namespace handler.
+
+        Keyword Args:
+            module (str): module package to import (def. ns_module)
+            ns_module (str): module namespace for commands (def. namespace)
+            matched (bool): strict or loose match ns_module (def. True)
+            import_ns (bool): import module package (def. False)
+            start (bool): load commands into the Tree (def. False)
+            is_class_cmd (bool): commands are class defined (def. False)
+            class_cmd_obj (object): object for class defined commands (def. None)
+            cli_class (object): cli class to be used (def. Base)
         """
         new_ns_handler = NameSpace(namespace, self.new_ns_context(), start=False, **kwargs)
         self.ns_handlers[namespace] = new_ns_handler
