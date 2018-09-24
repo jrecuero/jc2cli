@@ -30,6 +30,6 @@ class Freeway:
 
     def __str__(self):
         output = 'len: {0}\n'.format(self.length)
-        for i, qs in enumerate(self.._qsections):
+        for i, qs in enumerate(self._qsections):
             output += '\t{0}: {1}\n'.format(i, str(qs.get_section(i)))
         return output
