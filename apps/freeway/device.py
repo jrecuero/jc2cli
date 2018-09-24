@@ -1,4 +1,5 @@
 import random
+import section
 from location import Location
 
 
@@ -8,7 +9,7 @@ class Device:
         self._name = name
         self._dclass = dclass
         self._dsubclass = dsubclass
-        self._powrr = power
+        self._power = power
         self._location = None
         self._driver = None
         self._running = False
@@ -68,23 +69,26 @@ class Device:
 
     def traversing(self):
         sect, _ = self.get_location()
-        spec = sect.spec()
-        return self._diceit(sect.traversion() * self.driver.traversing(spec) * self.power)
+        spec = section.Spec()
+        driver_traversing = self.driver.traversing(spec) if self.driver else 1
+        return self._dice_it(sect.traversing() * driver_traversing * self.power)
 
     def entering(self, speed):
         sect, _ = self.get_location()
-        spec = sect.spec()
-        return self._diceit(sect.entering(speed) * self.driver.entering(spec, speed) * speed)
+        spec = section.Spec()
+        driver_entering = self.driver.entering(spec, speed) if self.driver else 1
+        return self._dice_it(sect.entering(speed) * driver_entering * speed)
 
     def exiting(self, speed):
         sect, _ = self.get_location()
-        spec = sect.spec()
-        return self._diceit(sect.exiting(speed) * self.driver.exiting(spec, speed) * speed)
+        spec = section.Spec()
+        driver_exiting = self.driver.exiting(spec, speed) if self.driver else 1
+        return self._dice_it(sect.exiting(speed) * driver_exiting * speed)
 
     def freeway_traverse(self):
         sect, dev_pos = self.get_location()
         dev_speed = self.traversing()
-        position = dev_pos * dev_speed
+        position = dev_pos + dev_speed
         while position >= sect.length:
             next_speed = position - sect.length
             exit_speed = self.exiting(next_speed)

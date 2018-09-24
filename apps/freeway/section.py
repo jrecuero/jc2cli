@@ -43,6 +43,7 @@ class Section:
     def exiting(self, speed):
         if self._exiting:
             return self._exiting(self._spec, speed)
+        return 1
 
     def __str__(self):
         return "len/width: {0}/{1} spec: {2}".format(self.length, self.width, Spec.string(self.spec))

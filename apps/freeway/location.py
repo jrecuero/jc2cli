@@ -20,7 +20,7 @@ class Location:
 
     @property
     def section(self):
-        return self._freeway.get_section(self.position)
+        return self._freeway.get_section(self._isect)
 
     @property
     def laps(self):
@@ -33,7 +33,7 @@ class Location:
         return self._isect, self.pos
 
     def next_section(self):
-        self._isect, islap = self.freeway.next_section_index(self.isect)
+        self._isect, islap = self.freeway.next_section_index(self._isect)
         if islap:
             self._laps += 1
         self.pos = 0
@@ -41,7 +41,7 @@ class Location:
 
     def lap_as_int(self):
         total = self.pos
-        for i in range(self.isect):
+        for i in range(self._isect):
             total += self.freeway.get_section(i).length
         return total
 
