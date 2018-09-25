@@ -25,5 +25,5 @@ if __name__ == '__main__':
     _race.set_laps(5)
     _ehdlr.set_race(_race)
     _ehdlr.setup()
-    _ehdlr.set_delay(1000)
+    _ehdlr.set_delay(100)
     _ehdlr.start()
