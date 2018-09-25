@@ -10,7 +10,7 @@ class EHandler:
         self._freeze = False
         self._delay  = 10
         self._worker_cbs = []
-        self._rtime = None
+        self._rtime = 0
         self._endgame = []
 
     def tick(self):
@@ -56,23 +56,28 @@ class EHandler:
             dev.running = False
             self._endgame.append(dev)
             if len(self._endgame) == 1:
-                print("[{}] winner: {}\n".format(len(self._endgame), dev.name))
+                print("[{}] winner {}: {}".format(len(self._endgame), dev.name, self._rtime))
             else:
-                print("[{}] device: {}\n".format(len(self._endgame), dev.name))
+                print("[{}] device {}: {}".format(len(self._endgame), dev.name, self._rtime))
             if len(self._endgame) == len(self.get_race().get_devices()):
                 self.stop()
+
+    def _ticker_thread(self):
+        while self._running:
+            time.sleep(self._delay / 1000)
+            self.tick()
 
     def start(self):
         threads = []
         self._running = True
         self.add_worker_cb(self._default_worker_thread)
+        t = threading.Thread(target=self._ticker_thread)
+        threads.append(t)
+        t.start()
         for k, dev in self._race.get_devices().items():
             t = threading.Thread(target=self.worker, args=(dev, ))
             threads.append(t)
             t.start()
-        # while self._running:
-        #     # time.Sleep(self._delay) * Milliseconds
-        #     self.tick()
         for t in threads:
             t.join()
 
