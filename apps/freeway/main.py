@@ -13,7 +13,7 @@ if __name__ == '__main__':
     _freeway.add_section(section.Section(50, 1, section.Spec.Turn))
     _freeway.add_section(section.Section(100, 1, section.Spec.Straight))
     _freeway.add_section(section.Section(50, 1, section.Spec.Turn))
-    _race.set_freeway(_freeway)
+    _race.freeway = _freeway
     _devices = [device.Device('dev-80', 'dev-class', 'dev-sub', 80),
                 device.Device('dev-50', 'dev-class', 'dev-sub', 50),
                 device.Device('dev-90', 'dev-class', 'dev-sub', 90),
@@ -22,8 +22,8 @@ if __name__ == '__main__':
     # _devices = [device.Device('dev-80', 'dev-class', 'dev-sub', 80), ]
     for dev in _devices:
         _race.add_device(dev)
-    _race.set_laps(5)
-    _ehdlr.set_race(_race)
+    _race.laps = 5
+    _ehdlr.race = _race
     _ehdlr.setup()
-    _ehdlr.set_delay(100)
+    _ehdlr.delay = 100
     _ehdlr.start()

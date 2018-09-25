@@ -5,21 +5,26 @@ class Race:
         self._devices = {}
         self._laps = None
 
+    @property
+    def freeway(self):
+        return self._freeway
+
+    @freeway.setter
     def set_freeway(self, fway):
         self._freeway = fway
         return self
 
-    def get_freeway(self):
-        return self._freeway
+    @property
+    def laps(self):
+        return self._laps
 
-    def set_laps(self, laps):
+    @laps.setter
+    def laps(self, laps):
         self._laps = laps
         return self
 
-    def get_laps(self):
-        return self._laps
-
-    def get_devices(self):
+    @property
+    def devices(self):
         return self._devices
 
     def add_device(self, dev):
