@@ -16,7 +16,8 @@ class EHandler:
     def tick(self):
         self._rtime += 1
 
-    def set_delay(self, delay):
+    @property
+    def delay(self, delay):
         self._delay = delay
         return self
 
@@ -24,10 +25,12 @@ class EHandler:
         self._worker_cbs.append(cb)
         return self
 
-    def get_race(self):
+    @property
+    def race(self):
         return self._race
 
-    def set_race(self, r):
+    @race.setter
+    def race(self, r):
         self._race = r
         return self
 
@@ -37,8 +40,8 @@ class EHandler:
                 cb(dev)
 
     def setup(self):
-        for dev in self.get_race().get_devices().values():
-            dev.new_location(self.get_race().get_freeway())
+        for dev in self.race.devices.values():
+            dev.new_location(self.race.freeway)
 
     def worker(self, dev):
         dev.running = True
@@ -52,14 +55,14 @@ class EHandler:
             time.sleep(self._delay / 1000)
 
     def _default_worker_thread(self, dev):
-        if dev.location.laps == self.get_race().get_laps():
+        if dev.location.laps == self.race.laps:
             dev.running = False
             self._endgame.append(dev)
             if len(self._endgame) == 1:
                 print("[{}] winner {}: {}".format(len(self._endgame), dev.name, self._rtime))
             else:
                 print("[{}] device {}: {}".format(len(self._endgame), dev.name, self._rtime))
-            if len(self._endgame) == len(self.get_race().get_devices()):
+            if len(self._endgame) == len(self.race.devices):
                 self.stop()
 
     def _ticker_thread(self):
@@ -74,7 +77,7 @@ class EHandler:
         t = threading.Thread(target=self._ticker_thread)
         threads.append(t)
         t.start()
-        for k, dev in self._race.get_devices().items():
+        for k, dev in self.race.devices.items():
             t = threading.Thread(target=self.worker, args=(dev, ))
             threads.append(t)
             t.start()
