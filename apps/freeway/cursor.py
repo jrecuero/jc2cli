@@ -124,3 +124,115 @@ class Cursor:
         position and attributes of the cursor.
         '''
         return Cursor.escape("8")
+
+    @staticmethod
+    def reset():
+        return Cursor.escape('[0m')
+
+    @staticmethod
+    def bold_on():
+        return Cursor.escape('[1m')
+
+    @staticmethod
+    def italics_on():
+        return Cursor.escape('[3m')
+
+    @staticmethod
+    def underline_on():
+        return Cursor.escape('[4m')
+
+    @staticmethod
+    def inverse_on():
+        return Cursor.escape('[7m')
+
+    @staticmethod
+    def strike_through_on():
+        return Cursor.escape('[9m')
+
+    @staticmethod
+    def bold_off():
+        return Cursor.escape('[22m')
+
+    @staticmethod
+    def italics_off():
+        return Cursor.escape('[23m')
+
+    @staticmethod
+    def underline_off():
+        return Cursor.escape('[24m')
+
+    @staticmethod
+    def underline_off():
+        return Cursor.escape('[27m')
+
+    @staticmethod
+    def strike_through_off():
+        return Cursor.escape('[29m')
+
+    @staticmethod
+    def fg_red():
+        return Cursor.escape('[31m')
+
+    @staticmethod
+    def fg_green():
+        return Cursor.escape('[32m')
+
+    @staticmethod
+    def fg_yellow():
+        return Cursor.escape('[33m')
+
+    @staticmethod
+    def fg_blue():
+        return Cursor.escape('[34m')
+
+    @staticmethod
+    def fg_magenta():
+        return Cursor.escape('[35m')
+
+    @staticmethod
+    def fg_cyan():
+        return Cursor.escape('[36m')
+
+    @staticmethod
+    def fg_white():
+        return Cursor.escape('[37m')
+
+    @staticmethod
+    def fg_default():
+        return Cursor.escape('[39m')
+
+    @staticmethod
+    def fg_black():
+        return Cursor.escape('[40m')
+
+    @staticmethod
+    def bg_red():
+        return Cursor.escape('[41m')
+
+    @staticmethod
+    def bg_green():
+        return Cursor.escape('[42m')
+
+    @staticmethod
+    def bg_yellow():
+        return Cursor.escape('[43m')
+
+    @staticmethod
+    def bg_blue():
+        return Cursor.escape('[44m')
+
+    @staticmethod
+    def bg_magenta():
+        return Cursor.escape('[45m')
+
+    @staticmethod
+    def bg_cyan():
+        return Cursor.escape('[46m')
+
+    @staticmethod
+    def bg_white():
+        return Cursor.escape('[47m')
+
+    @staticmethod
+    def bg_default():
+        return Cursor.escape('[49m')
