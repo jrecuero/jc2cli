@@ -3,9 +3,12 @@ import race
 import freeway
 import section
 import device
+from cursor import Cursor
 
 
 if __name__ == '__main__':
+    Cursor.print(Cursor.clear_entire_screen())
+    Cursor.print(Cursor.move_upper_left(0))
     _ehdlr = ehandler.EHandler()
     _race = race.Race()
     _freeway = freeway.Freeway()
