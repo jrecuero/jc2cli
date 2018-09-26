@@ -162,7 +162,7 @@ class Cursor:
         return Cursor.escape('[24m')
 
     @staticmethod
-    def underline_off():
+    def inverse_off():
         return Cursor.escape('[27m')
 
     @staticmethod
