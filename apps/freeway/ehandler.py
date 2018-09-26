@@ -17,6 +17,10 @@ class EHandler:
         self._rtime += 1
 
     @property
+    def delay(self):
+        return self._delay
+
+    @delay.setter
     def delay(self, delay):
         self._delay = delay
         return self

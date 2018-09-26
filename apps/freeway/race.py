@@ -10,7 +10,7 @@ class Race:
         return self._freeway
 
     @freeway.setter
-    def set_freeway(self, fway):
+    def freeway(self, fway):
         self._freeway = fway
         return self
 
