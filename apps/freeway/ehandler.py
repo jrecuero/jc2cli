@@ -1,5 +1,6 @@
 import threading
 import time
+from cursor import Cursor
 
 
 class EHandler:
@@ -63,10 +64,13 @@ class EHandler:
             dev.running = False
             self._endgame.append(dev)
             if len(self._endgame) == 1:
+                Cursor.print(Cursor.fg_yellow())
                 print("[{}] winner {}: {}".format(len(self._endgame), dev.name, self._rtime))
             else:
+                Cursor.print(Cursor.fg_cyan())
                 print("[{}] device {}: {}".format(len(self._endgame), dev.name, self._rtime))
             if len(self._endgame) == len(self.race.devices):
+                Cursor.print(Cursor.reset())
                 self.stop()
 
     def _ticker_thread(self):
