@@ -10,3 +10,4 @@ are being handled and created.
 It basically keeps working with decorators, but behavior is moved from the
 decorator and a full tree is created for handling it.
 
+parser-1.0 makes use of obsolete prompt-toolkit 1.0
