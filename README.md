@@ -10,5 +10,5 @@ are being handled and created.
 It basically keeps working with decorators, but behavior is moved from the
 decorator and a full tree is created for handling it.
 
-Updating to toolkit_prompt 2.0
-
+Branch v.1.0.prompt.2.0 makes use of prompt-toolkit 2.0 and legacy syntax handling, 
+where mostly all logic is embedded in decorators.
