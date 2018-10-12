@@ -209,7 +209,7 @@ class Base(object):
         if self.__recording:
             self.__record_data.append(user_input)
 
-    def get_bottom_toolbar_tokens(self, cli):
+    def get_bottom_toolbar_tokens(self):
         """Method that provides data and format to be displayed in the ToolBar.
 
         Args:
@@ -218,7 +218,7 @@ class Base(object):
         Returns:
             :any:`list` : list with data to be displayed in the ToolBar.
         """
-        return [(Token.Toolbar, '{}'.format(self.toolbar_str)), ]
+        return '{}'.format(self.toolbar_str)
 
     def get_prompt_tokens(self, cli):
         """Returns tokens for command line prompt.
@@ -236,7 +236,7 @@ class Base(object):
         """
         return self.prompt_str if isinstance(self.prompt_str, str) else self.prompt_str(cli)
 
-    def get_rprompt_tokens(self, cli):
+    def get_rprompt_tokens(self):
         """Returns tokens for command line right prompt.
 
         Args:
@@ -245,12 +245,12 @@ class Base(object):
         Returns:
             :any:`list` : list with data to be displayed in the right prompt..
         """
-        return [(Token.RPrompt, '{}'.format(self.get_rprompt(cli))), ]
+        return '{}'.format(self.get_rprompt())
 
-    def get_rprompt(self, cli):
+    def get_rprompt(self):
         """get_rprompt returns the value for the command line right prompt.
         """
-        return self.rprompt_str if isinstance(self.rprompt_str, str) else self.rprompt_str(cli)
+        return self.rprompt_str if isinstance(self.rprompt_str, str) else self.rprompt_str()
 
     def print_pre_prompt(self, pre_prompt):
         """print_pre_prompt prints the given string before the prompt.
@@ -368,6 +368,8 @@ class Base(object):
                             # get_bottom_toolbar_tokens=self.get_bottom_toolbar_tokens,
                             # get_prompt_tokens=self.get_prompt_tokens,
                             # get_rprompt_tokens=self.get_rprompt_tokens,
+                            rprompt=self.get_rprompt_tokens,
+                            bottom_toolbar=self.get_bottom_toolbar_tokens,
                             refresh_interval=1)
         # completer.reset()
         return user_input

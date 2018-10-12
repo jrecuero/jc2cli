@@ -46,7 +46,7 @@ logger = loggerator.getLoggerator(MODULE)
 #
 # -----------------------------------------------------------------------------
 #
-def right_prompt(cli):
+def right_prompt():
     st = ""
     for r, d in get_cpu().regs():
         st += ('{}: {}\n'.format(r, d))
