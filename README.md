@@ -10,3 +10,5 @@ are being handled and created.
 It basically keeps working with decorators, but behavior is moved from the
 decorator and a full tree is created for handling it.
 
+Updating to toolkit_prompt 2.0
+
