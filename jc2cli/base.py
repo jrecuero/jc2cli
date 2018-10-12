@@ -17,11 +17,12 @@ from jc2cli.error_handler import CliError, CliValidationError
 from prompt_toolkit import prompt
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-from pygments.style import Style
-from prompt_toolkit.shortcuts import print_tokens
-from prompt_toolkit.styles import style_from_dict
+# from pygments.style import Style
+# from prompt_toolkit.shortcuts import print_tokens
+# from prompt_toolkit.styles import Style as PStyle
+# from prompt_toolkit.styles.from_pygments import style_from_pygments
 from pygments.token import Token
-from pygments.styles.default import DefaultStyle
+# from pygments.styles.default import DefaultStyle
 
 
 # -----------------------------------------------------------------------------
@@ -46,20 +47,20 @@ logger = loggerator.getLoggerator(MODULE)
 #
 # -----------------------------------------------------------------------------
 #
-class DocumentStyle(Style):
-    """DocumentStyle class is the style used to decorate the cli completer.
-    """
-    styles = {
-        Token.Menu.Completions.Completion.Current: 'bg:#00aaaa #000000',
-        Token.Menu.Completions.Completion: 'bg:#008888 #ffffff',
-        Token.Menu.Completions.ProgressButton: 'bg:#003333',
-        Token.Menu.Completions.ProfressBar: 'bg:#00aaaa',
-        Token.Toolbar: '#ffffff italic bg:#007777',
-        Token.RPrompt: 'bg:#ff0066 #ffffff',
-        Token.PrePrompt: '#44ff44 underline',
-        Token.PostPrompt: '#ff0066 italic',
-    }
-    styles.update(DefaultStyle.styles)
+# class DocumentStyle(Style):
+#     """DocumentStyle class is the style used to decorate the cli completer.
+#     """
+#     styles = {
+#         Token.Menu.Completions.Completion.Current: 'bg:#00aaaa #000000',
+#         Token.Menu.Completions.Completion: 'bg:#008888 #ffffff',
+#         Token.Menu.Completions.ProgressButton: 'bg:#003333',
+#         Token.Menu.Completions.ProfressBar: 'bg:#00aaaa',
+#         Token.Toolbar: '#ffffff italic bg:#007777',
+#         Token.RPrompt: 'bg:#ff0066 #ffffff',
+#         Token.PrePrompt: '#44ff44 underline',
+#         Token.PostPrompt: '#ff0066 italic',
+#     }
+#     styles.update(DefaultStyle.styles)
 
 
 class Base(object):
@@ -75,7 +76,7 @@ class Base(object):
         self.rprompt_str = ''
         self.__recording = False
         self.__record_data = []
-        self.__style = style_from_dict(DocumentStyle.styles)
+        # self.__style = style_from_pygments(DocumentStyle.styles)
 
     @property
     def commands(self):
@@ -254,22 +255,24 @@ class Base(object):
     def print_pre_prompt(self, pre_prompt):
         """print_pre_prompt prints the given string before the prompt.
         """
-        if pre_prompt:
-            tokens = [
-                (Token.PrePrompt, pre_prompt if isinstance(pre_prompt, str) else pre_prompt()),
-                (Token, '\n'),
-            ]
-            print_tokens(tokens, style=self.__style)
+        # if pre_prompt:
+        #     tokens = [
+        #         (Token.PrePrompt, pre_prompt if isinstance(pre_prompt, str) else pre_prompt()),
+        #         (Token, '\n'),
+        #     ]
+        #     print_tokens(tokens, style=self.__style)
+        pass
 
     def print_post_prompt(self, post_prompt):
         """print_post_prompt prints the given string after the prompt.
         """
-        if post_prompt:
-            tokens = [
-                (Token.PostPrompt, post_prompt if isinstance(post_prompt, str) else post_prompt()),
-                # (Token, '\n'),
-            ]
-            print_tokens(tokens, style=self.__style)
+        # if post_prompt:
+        #     tokens = [
+        #         (Token.PostPrompt, post_prompt if isinstance(post_prompt, str) else post_prompt()),
+        #         # (Token, '\n'),
+        #     ]
+        #     print_tokens(tokens, style=self.__style)
+        pass
 
     def empty_line(self):
         """empty_line method handles an empty line entered by the user in the
@@ -352,18 +355,19 @@ class Base(object):
         history = kwargs.get('history', FileHistory('history.txt'))
         completer = kwargs.get('completer', CliCompleter(self, rprompt=use_default))
         validator = kwargs.get('validator', CliValidator(self))
-        style = kwargs.get('style', DocumentStyle)
+        # style = kwargs.get('style', DocumentStyle)
         self.print_pre_prompt(kwargs.get('pre_prompt', None))
         self.post_prompt = kwargs.get('post_prompt', None)
 
-        user_input = prompt(history=history,
+        user_input = prompt(message="> ",
+                            history=history,
                             auto_suggest=AutoSuggestFromHistory(),
-                            style=style,
+                            # style=style,
                             completer=completer,
                             validator=validator,
-                            get_bottom_toolbar_tokens=self.get_bottom_toolbar_tokens,
-                            get_prompt_tokens=self.get_prompt_tokens,
-                            get_rprompt_tokens=self.get_rprompt_tokens,
+                            # get_bottom_toolbar_tokens=self.get_bottom_toolbar_tokens,
+                            # get_prompt_tokens=self.get_prompt_tokens,
+                            # get_rprompt_tokens=self.get_rprompt_tokens,
                             refresh_interval=1)
         # completer.reset()
         return user_input
