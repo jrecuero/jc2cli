@@ -1,3 +1,8 @@
+'''token module provides all tokens required to parse any lexical language.
+
+version: 2.0
+'''
+
 ILLEGAL  = -1
 EOF = 0
 WS = 1

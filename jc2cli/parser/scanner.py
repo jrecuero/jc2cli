@@ -1,10 +1,52 @@
+'''scanner module provides all character scanning functionality in order to
+scan any lexical languages.
+
+version: 2.0
+'''
+
 import jc2cli.parser.token as Token
+
+
+class Reader(object):
+
+    def __init__(self, line):
+        self.line = line
+        self.hook = 0
+
+    def read_char(self):
+        if self.hook == len(self.line):
+            return Token.EOF
+        char = self.line[self.hook]
+        self.hook += 1
+        return char
+
+    def unread_char(self):
+        self.hook -= 1
+
+
+class Buffer(object):
+
+    def __init__(self):
+        self.data = None
+
+    def write_char(self, ch):
+        if self.data is None:
+            self.data = ch
+        else:
+            self.data += ch
+
+    def to_string(self):
+        return self.data
 
 
 class Scanner(object):
 
-    def __init__(self):
-        self.reader = None
+    def __init__(self, char_map, line=None):
+        self.char_map = char_map
+        self.reader = None if line is None else Reader(line)
+
+    def set_reader(self, line):
+        self.reader = Reader(line)
 
     def read(self):
         ch = self.reader.read_char()
@@ -17,21 +59,36 @@ class Scanner(object):
         return ch in [' ', '\t', '\n']
 
     def is_letter(self, ch):
-        return ch.isalpha(self)
+        return ch.isalpha()
 
     def is_digit(self, ch):
-        return ch.isnumeric()
+        return ch.isdigit()
 
     def scan(self):
-        pass
+        ch = self.read()
+
+        if self.is_white_space(ch):
+            self.unread()
+            return self.scan_white_space()
+        elif self.is_letter(ch):
+            self.unread()
+            return self.scan_ident()
+        elif ch == 0:
+            return Token.EOF
+
+        if ch in self.char_map:
+            return self.char_map[ch], ch
+
+        return Token.ILLEGAL, ch
 
     def scan_white_space(self):
+        buff = Buffer()
         buff.write_char(self.read())
         while True:
             ch = self.read()
             if ch == Token.EOF:
                 break
-            else if self.is_white_space(ch):
+            elif not self.is_white_space(ch):
                 self.unread()
                 break
             else:
@@ -39,12 +96,13 @@ class Scanner(object):
         return (Token.WS, buff.to_string())
 
     def scan_ident(self):
+        buff = Buffer()
         buff.write_char(self.read())
         while True:
             ch = self.read()
             if ch == Token.EOF:
                 break
-            else if not self.is_letter(ch) and not self.is_digit(ch) and ch not in ['_', '-']:
+            elif not self.is_letter(ch) and not self.is_digit(ch) and ch not in ['_', '-']:
                 self.unread()
                 break
             else:
