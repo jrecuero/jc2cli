@@ -16,6 +16,14 @@ class Syntax(object):
         self.tokens = []
 
 
+def new_syntax(command, argos, tokens):
+    syntax = Syntax()
+    syntax.command = command
+    syntax.arguments = argos
+    syntax.tokens = tokens
+    return syntax
+
+
 class Buffer(object):
 
     def __init__(self):
@@ -26,11 +34,16 @@ class Buffer(object):
 
 class Parser(object):
 
-    def __init__(self, line):
-        self.scanner = Scanner.Scanner(line)
+    def __init__(self, char_map, line=None):
+        self.scanner = Scanner.Scanner(char_map, line)
         self.buffer = Buffer()
 
-    def parse():
+    def set_line(self, line):
+        self.scanner.set_reader(line)
+
+    def parse(self):
+        # import pdb
+        # pdb.set_trace()
         syntax = Syntax()
         tok, lit = self.scan_ignore_white_space()
         if tok != Token.IDENT:
@@ -40,25 +53,25 @@ class Parser(object):
             tok, lit = self.scan_ignore_white_space()
             if tok == Token.ILLEGAL:
                 return None, "found {0}, expected argument\n".format(lit)
-            else if tok == Token.EOF:
+            elif tok == Token.EOF:
                 break
             syntax.arguments.append(lit)
             syntax.tokens.append(tok)
         return syntax, None
 
-    def scan():
+    def scan(self):
         if self.buffer.size:
             self.buffer.size = 0
             return (self.buffer.token, self.buffer.literal)
 
         self.buffer.token, self.buffer.literal = self.scanner.scan()
-        return
+        return self.buffer.token, self.buffer.literal
 
-    def scan_ignore_white_space():
+    def scan_ignore_white_space(self):
         tok, lit = self.scan()
         if tok == Token.WS:
             tok, lit = self.scan()
-        return
+        return tok, lit
 
-    def unscan():
+    def unscan(self):
         self.buffer.size = 1

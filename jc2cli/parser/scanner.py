@@ -67,14 +67,14 @@ class Scanner(object):
     def scan(self):
         ch = self.read()
 
-        if self.is_white_space(ch):
+        if ch == 0:
+            return Token.EOF, ch
+        elif self.is_white_space(ch):
             self.unread()
             return self.scan_white_space()
         elif self.is_letter(ch):
             self.unread()
             return self.scan_ident()
-        elif ch == 0:
-            return Token.EOF
 
         if ch in self.char_map:
             return self.char_map[ch], ch
