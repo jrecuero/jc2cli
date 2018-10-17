@@ -41,8 +41,8 @@ class Buffer(object):
 
 class Scanner(object):
 
-    def __init__(self, char_map, line=None):
-        self.char_map = char_map
+    def __init__(self, lexer, line=None):
+        self.lexer = lexer
         self.reader = None if line is None else Reader(line)
 
     def set_reader(self, line):
@@ -72,12 +72,12 @@ class Scanner(object):
         elif self.is_white_space(ch):
             self.unread()
             return self.scan_white_space()
-        elif self.is_letter(ch):
+        elif self.lexer.is_ident_prefix_char(ch, self):
             self.unread()
             return self.scan_ident()
 
-        if ch in self.char_map:
-            return self.char_map[ch], ch
+        if ch in self.lexer.get_char_map():
+            return self.lexer.get_char_map()[ch], ch
 
         return Token.ILLEGAL, ch
 
@@ -102,7 +102,7 @@ class Scanner(object):
             ch = self.read()
             if ch == Token.EOF:
                 break
-            elif not self.is_letter(ch) and not self.is_digit(ch) and ch not in ['_', '-']:
+            elif not self.lexer.is_ident_char(ch, self):
                 self.unread()
                 break
             else:

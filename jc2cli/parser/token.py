@@ -7,6 +7,7 @@ ILLEGAL  = -1
 EOF = 0
 WS = 1
 IDENT = 2
+CUSTOM = 3
 # OPENBRACKET token [.
 OPENBRACKET = 3
 # CLOSEBRACKET token ].

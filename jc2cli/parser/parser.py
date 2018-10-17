@@ -34,30 +34,25 @@ class Buffer(object):
 
 class Parser(object):
 
-    def __init__(self, char_map, line=None):
-        self.scanner = Scanner.Scanner(char_map, line)
+    def __init__(self, lexer, line=None):
+        self.lexer = lexer
+        self.scanner = Scanner.Scanner(lexer, line)
         self.buffer = Buffer()
 
     def set_line(self, line):
         self.scanner.set_reader(line)
 
     def parse(self):
-        # import pdb
-        # pdb.set_trace()
-        syntax = Syntax()
-        tok, lit = self.scan_ignore_white_space()
-        if tok != Token.IDENT:
-            return None, "found {0} expected command\n".format(lit)
-        syntax.command = lit
+        index = 1
         while True:
             tok, lit = self.scan_ignore_white_space()
             if tok == Token.ILLEGAL:
                 return None, "found {0}, expected argument\n".format(lit)
             elif tok == Token.EOF:
                 break
-            syntax.arguments.append(lit)
-            syntax.tokens.append(tok)
-        return syntax, None
+            self.lexer.parse(index, tok, lit)
+            index += 1
+        return self.lexer.result(), None
 
     def scan(self):
         if self.buffer.size:

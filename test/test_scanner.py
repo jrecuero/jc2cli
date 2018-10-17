@@ -6,21 +6,13 @@ version: 2.0
 import pytest
 from jc2cli.parser.scanner import Scanner
 import jc2cli.parser.token as Token
+import jc2cli.parser.lex.cli.lexer as Lexer
 
 
 @pytest.fixture
 def scanner(request):
-    char_map = {'[': Token.OPENBRACKET,
-                ']': Token.CLOSEBRACKET,
-                '|': Token.PIPE,
-                '*': Token.ASTERISK,
-                '+': Token.PLUS,
-                '?': Token.QUESTION,
-                '!': Token.ADMIRATION,
-                '@': Token.AT,
-                '<': Token.OPENMARK,
-                '>': Token.CLOSEMARK, }
-    return Scanner(char_map)
+    lexer = Lexer.Lexer()
+    return Scanner(lexer)
 
 
 @pytest.mark.parametrize(('inputs', 'results'),
@@ -89,7 +81,7 @@ def test_scanner_scan_ident(scanner, inputs, results):
 
 @pytest.mark.parametrize(('inputs', 'results'),
                          [('SELECT', (Token.IDENT, 'SELECT')),
-                          ('[DATA]', (Token.OPENBRACKET, '[')), ])
+                          ('[DATA]', (Lexer.OPENBRACKET, '[')), ])
 def test_scanner_scan(scanner, inputs, results):
     scanner.set_reader(inputs)
     got = scanner.scan()
