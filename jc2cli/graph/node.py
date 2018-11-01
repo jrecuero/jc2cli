@@ -29,7 +29,7 @@ class Block(object):
         self.loop.add_child(self.end)
         return True
 
-    def create_loop_and_skio(self):
+    def create_loop_and_skip(self):
         self.is_loop = True
         self.is_ski = True
         # Next statement is required for loops that can be skipped.
