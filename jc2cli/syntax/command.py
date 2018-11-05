@@ -1,14 +1,12 @@
+from jc2cli.syntax.content import Content
 from jc2cli.syntax.command_syntax import CommandSyntax
 from jc2cli.syntax.completer import CompleterCommand
 
 
-class Command:
+class Command(Content):
 
-    def __init__(self, parent):
-        self.label = None
-        self.help = None
-        self.completer = None
-        self.matchable = False
+    def __init__(self, parent, label, _help, completer=None):
+        super(Command, self).__init__(label, _help, completer)
         self.syntax_str = None
         self.syntax = None
         self.arguments = []

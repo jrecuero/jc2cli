@@ -6,11 +6,11 @@ class Content:
             return '<None>'
         return content.label
 
-    def __init__(self, label, help, completer):
+    def __init__(self, label, _help, completer=None):
         self.label = label
-        self.help = help
-        self.completer = comleter
-        self..matchable = True
+        self.help = _help
+        self.completer = completer
+        self.matchable = True
 
     def validate(self, val):
         return True
